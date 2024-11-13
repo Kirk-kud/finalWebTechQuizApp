@@ -1,5 +1,6 @@
 <?php
-    include "../db/config.php";
+global $conn; // check this
+include "../db/config.php";
     $response = [];
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -41,11 +42,28 @@
                 }
                 else{
                     $hash = password_hash($password, PASSWORD_DEFAULT);
+                    // using bcrypt
 
+                    $role = 2; // common user
+                    $timestamp = time("Y-m-d H:i:s"); // timestamp for creation
 
+                    $statement = $conn->prepare("INSERT INTO users (first_name, last_name, email, dob, password, role, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?)");
+                    $statement->bind_param("sssssiss", $fname, $lname, $email, $dob, $hash, $role, $timestamp);
+
+                    if ($statement->execute()) {
+                        $response["error"] = "Registration successful.";
+                        header("Location: view/login.php");
+                        exit();
+                    }
+                    else{
+                        $response["error"] = "Registration failed.";
+                    }
                 }
+            } catch (Exception $e){
+                $response["error"] = "Error: " . $e->getMessage();
             }
         }
 
     }
+    $conn->close();
 ?>
