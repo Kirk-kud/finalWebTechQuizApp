@@ -42,6 +42,7 @@
                 else{
                     $hash = password_hash($password, PASSWORD_DEFAULT);
 
+
                 }
             }
         }
