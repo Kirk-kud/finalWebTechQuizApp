@@ -3,4 +3,25 @@
     align-content: center;
     align-items: center;
     display: flex;
+    margin: auto;
+    justify-content: center;
+}
+.lower_description{
+    text-align: center;
+    align-content: center;
+    align-items: center;
+    display: flex;
+    margin: auto;
+    justify-content: center;
+}
+.container{
+    position: absolute;
+    height: 100vh;
+}
+.main_picture{
+    align-content: center;
+    width: 25rem;
+    height: 25rem;
+    margin: auto;
+    display: flex;
 }

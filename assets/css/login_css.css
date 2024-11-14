@@ -1,0 +1,18 @@
+#logo{
+    align-content: center;
+    width: 25rem;
+    height: 25rem;
+    margin: auto;
+    display: flex;
+}
+.login_form{
+    padding: 5rem;
+    align-items: center;
+}
+.form_elements{
+    padding: 1rem;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    margin: auto;
+}
