@@ -1,0 +1,17 @@
+
+#logo {
+    display: flex;
+    justify-content: center;
+    width: 20rem;
+    height: 20rem;
+    margin: auto;
+}
+h1 {
+    text-align: center;
+}
+.backstory {
+    border: 1px solid purple;
+    text-align: center;
+    padding: 2rem;
+    font-family: Serif;
+}
