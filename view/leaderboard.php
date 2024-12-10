@@ -15,6 +15,8 @@
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
+            background: linear-gradient(135deg, #ff9800 0%, #ff9800 50%, white 50%, white 100%);
+            background-attachment: fixed;
         }
         .page-container {
             display: flex;
@@ -48,9 +50,63 @@
             font-weight: bold;
         }
         .content {
-            margin-top: 100px; /* Adjust based on navbar height */
-            padding: 0 5%;
+            margin-top: 13rem;
+            padding: 2rem 5%;
+            align-items: center;
+            text-align: center;
         }
+        .content h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .content p {
+            color: #333;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .leaderboard-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 2rem;
+        }
+        .leaderboard-section h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        table {
+            width: 80%;
+            max-width: 600px;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        table th {
+            background-color: #ff9800;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+        table td {
+            border-bottom: 1px solid #eee;
+            padding: 12px;
+            text-align: center;
+        }
+        table tr:nth-child(even) {
+            background-color: rgba(255, 152, 0, 0.1);
+        }
+        table tr:hover {
+            background-color: rgba(255, 152, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -64,44 +120,12 @@
                 margin: 0 0.25rem;
             }
             .content {
-                margin-top: 150px; /* Adjust for mobile navbar height */
+                margin-top: 16rem;
+            }
+            table {
+                width: 95%;
             }
         }
-        .content {
-            margin-top: 13rem; /* Increased from 100px to provide more clearance */
-            padding: 0 5%;
-            align-items: center;
-            text-align: center;
-        }
-        @media (max-width: 768px) {
-            .content {
-                margin-top: 16rem; /* Adjusted for mobile view */
-            }
-        }
-        /* Previous styles remain the same */
-        .leaderboard-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 2rem;
-        }
-        table {
-            width: 80%;
-            max-width: 600px;
-            border-collapse: collapse;
-        }
-        table th, table td {
-            border-bottom: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        table thead {
-            background-color: #f2f2f2;
-        }
-        table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
     </style>
 </head>
 <body>
@@ -118,6 +142,7 @@
                 echo "<a href='../view/signup.php'>Sign Up</a>";
             }
             else{
+                echo "<a href='quizzes.php'>Quizzes</a>";
                 echo "<a href='leaderboard.php'>Leaderboard</a>";
                 echo "<a href='profile.php'>Profile</a>";
                 echo "<a href='../actions/logout.php'>Logout</a>";
@@ -127,12 +152,11 @@
     </nav>
 
     <div class="content">
-        <h1 style="text-align: center;">Leaderboard</h1>
+        <h1>Leaderboard</h1>
         <p>Welcome to the Quiz Quest Leaderboard! <br>Here you can see the top performers and track your progress.</p>
 
         <div class="leaderboard-section">
             <h2>Top Players</h2>
-            <!-- Add your leaderboard content here -->
             <table>
                 <thead>
                 <tr>
@@ -142,7 +166,7 @@
                 </tr>
                 </thead>
                 <?php
-                if (!isset($_SESSION['user_id'])){ // not allowing users who are not signed up
+                if (!isset($_SESSION['user_id'])){
                     header("Location: ../index.php");
                     exit();
                 }
@@ -158,7 +182,6 @@
                         echo "<tr>";
                         echo "<td>" . htmlspecialchars($rank++) . "</td>";
                         echo "<td>" . htmlspecialchars($row['fname'] . ' ' . $row['lname']) . "</td>";
-//                        echo "<td>" . htmlspecialchars($row['quiz_name']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['high_score']) . "</td>";
                         echo "</tr>";
                     }
@@ -166,22 +189,6 @@
                     echo "Error: " . $e->getMessage();
                 }
                 ?>
-<!--                <tbody>-->
-<!--                <tr>-->
-<!--                    <td>1</td>-->
-<!--                    <td>QuizMaster</td>-->
-<!--                    <td>1000</td>-->
-<!--                </tr>-->
-<!--                <tr>-->
-<!--                    <td>2</td>-->
-<!--                    <td>LearningNinja</td>-->
-<!--                    <td>950</td>-->
-<!--                </tr>-->
-<!--                <tr>-->
-<!--                    <td>3</td>-->
-<!--                    <td>KnowledgeSeeker</td>-->
-<!--                    <td>900</td>-->
-<!--                </tr>-->
                 </tbody>
             </table>
         </div>

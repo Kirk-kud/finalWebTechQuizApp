@@ -120,6 +120,7 @@
                     echo "<a href='view/signup.php'>Sign Up</a>";
                 }
                 else{
+                    echo "<a href='view/quizzes.php'>Quizzes</a>";
                     echo "<a href='view/leaderboard.php'>Leaderboard</a>";
                     echo "<a href='view/profile.php'>Profile</a>";
                     echo "<a href='actions/logout.php'>Logout</a>";
