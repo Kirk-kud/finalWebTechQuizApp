@@ -109,7 +109,7 @@
 <div class="page-container">
     <div class="hero">
         <nav class="navbar">
-            <div class="logo"><img style="width:6rem; height: 6rem;" src="assets/images/quiz_quest_logo_black.png"></div>
+            <div class="logo"><hr><hr><img style="width:6rem; height: 6rem;" src="assets/images/quiz_quest_logo_white.png"><hr><hr></div>
             <div class="links">
                 <a href="index.php">Home</a>
                 <a href="view/about.html">About</a>

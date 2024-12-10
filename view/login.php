@@ -7,12 +7,15 @@
     <body>
     <div class="container">
         <div class="left_div">
-            <br><br><br>
+            <h1 style="text-align: center; font-family: 'Arial Rounded MT Bold', Arial; font-weight: 400;">
+                Welcome Back!
+            </h1>
+
             <div class="top_bar">
-
                     <img src="../assets/images/quiz_quest_logo_black.png" alt="Welcome Logo" id="logo">
-
             </div>
+
+            <h1 style="font-weight: 400; text-align: center;">Login Here:</h1>
 
             <div class="form_container">
                 <form class=login_form" method="post" action="../actions/login_user.php" data-parsley-validate>
@@ -25,7 +28,6 @@
                                data-parsley-required-message="Email is required." data-parsley-type-message="Please enter a valid email address.">
                         <br>
                     </div>
-                    <br><br>
 
                     <div class="form_elements" id="sub_div">
                         <label for="password">Password</label>

@@ -9,12 +9,12 @@
             <img src="../assets/images/sign_up_image.jpg" alt="Library" id="login_image_2">
         </div>
         <div class="right_div">
-            <h1>
-                Welcome to Quiz Quest
+            <h1 style="font-weight: 300;">
+                Welcome To
             </h1>
-
+            <img src="../assets/images/quiz_quest_logo_black.png" alt="Welcome Logo" id="logo">
             <h2>
-                Sign up to get started
+                Sign Up To Get Started
             </h2>
             <div class="form_container"> <!--right div-->
                 <form method="post" action="../actions/register_user.php" data-parsley-validate>

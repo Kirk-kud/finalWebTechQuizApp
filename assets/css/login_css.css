@@ -5,7 +5,6 @@ body {
     height: 100vh;
     overflow: hidden; /* Prevent scrolling */
     font-family: "Arial Rounded MT Bold", Arial;
-    transform: scale(0.8);
 }
 
 .left_div {
@@ -17,6 +16,7 @@ body {
     padding: 0.5rem;
     box-sizing: border-box;
     overflow: hidden; /* Prevent internal scrolling */
+    transform: scale(0.8);
 }
 
 .right_div {
