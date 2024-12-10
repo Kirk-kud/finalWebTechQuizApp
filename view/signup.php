@@ -54,7 +54,7 @@
                                 data-parsley-required-message="Please confirm your password." data-parsley-equalto-message="Passwords do not match.">
                     </div>
 
-                    <input id="loginBTN" type="submit" value="Login" name="login_submit">
+                    <input id="loginBTN" type="submit" value="Sign Up" name="login_submit">
                 </form>
             </div>
             <p>Don't have an account? <a href="login.php" style="color: dodgerblue;">Login</a></p>

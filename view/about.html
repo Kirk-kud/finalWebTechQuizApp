@@ -2,18 +2,147 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>About Us</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Quiz Quest</title>
     <link rel="stylesheet" href="../assets/css/about_css.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+        }
+        #logo {
+            display: block;
+            width: 15rem;
+            height: 15rem;
+            object-fit: contain;
+            margin: 2rem auto;
+            transition: transform 0.3s ease;
+        }
+        #logo:hover {
+            transform: scale(1.05);
+        }
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 3rem;
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .backstory {
+            background-color: #f9f5ff;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+            position: relative;
+            border: 2px solid #8a4fff;
+        }
+        .backstory::before {
+            content: '"';
+            position: absolute;
+            top: -30px;
+            left: 20px;
+            font-size: 6rem;
+            color: #8a4fff;
+            opacity: 0.2;
+        }
+        .backstory p {
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        .decorative-element {
+            position: absolute;
+            background-color: #8a4fff;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        .decorative-element-1 {
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+        }
+        .decorative-element-2 {
+            bottom: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+        }
+        .home-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            background-color: #8a4fff;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+        .home-button:hover {
+            background-color: #6a2fff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(138, 79, 255, 0.3);
+        }
+        .home-button::before {
+            content: '←';
+            margin-right: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .container {
+                margin: 0 1rem;
+                padding: 2rem 1.5rem;
+            }
+            #logo {
+                width: 10rem;
+                height: 10rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <img src="../assets/images/quiz_quest_logo_black.png" alt="QUIZ QUEST LOGO" id="logo">
-  <h1>The Story Behind Quiz Quest</h1>
-  <div class="backstory">
-    <p>Quiz Quest was born out of an evident lack of educational and collaborative pass time among youths.</p>
-    <p>Our aim is to make quizzes fun again!</p>
-  </div>
+<div class="container">
+    <div class="decorative-element decorative-element-1"></div>
+    <div class="decorative-element decorative-element-2"></div>
 
+    <img src="../assets/images/quiz_quest_logo_black.png" alt="QUIZ QUEST LOGO" id="logo">
 
+    <h1>The Story Behind Quiz Quest</h1>
 
+    <div class="backstory">
+        <p>Quiz Quest was born out of an evident lack of educational and collaborative pass time among youths.</p>
+        <p>Our aim is to make quizzes fun again!</p>
+    </div>
+
+    <a href="../index.php" class="home-button">Back to Home</a>
+</div>
 </body>
 </html>

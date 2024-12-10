@@ -21,9 +21,9 @@
                 $stmt->execute();
                 $stmt->store_result();
 
-                if (stmt->num_rows > 0) {
-                    stmt->bind_result($user_id, $fname, $lname, $hash, $role);
-                    stmt->fetch();
+                if ($stmt->num_rows > 0) {
+                    $stmt->bind_result($user_id, $fname, $lname, $hash, $role);
+                    $stmt->fetch();
 
                     if (password_verify($password, $hash)) {
                         $_SESSION['user_id'] = $user_id;
