@@ -1,11 +1,9 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
     display: flex;
     height: 100vh;
     font-family: "Arial Rounded MT Bold", Arial;
-
 }
 
 .left_div {
@@ -28,11 +26,17 @@ body {
     padding: 20px;
     box-sizing: border-box;
     transform:scale(0.9);
+    overflow: hidden;
 }
 
 .form_container {
     width: 100%;
-    max-width: 400px;
+    max-width: 25rem;
+    align-items: center;
+    padding: 1rem;
+    justify-content: center;
+    align-content: center;
+    margin: auto;
 }
 
 form {
@@ -45,8 +49,8 @@ label {
 }
 
 input {
-    margin-bottom: 15px;
-    padding: 10px;
+    margin-bottom: 1rem;
+    padding: 1rem;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
@@ -80,4 +84,37 @@ p {
     .left_div {
         height: 30vh;
     }
+}
+label{
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #555;
+    text-align: center;
+    font-family: "Arial Rounded MT Bold";
+    font-size: large;
+}
+.form_element{
+    padding: 1rem;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    margin: auto;
+}
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: #333;
+    transition: border-color 0.3s ease;
+    width: 100%;
+}
+#loginBTN{
+    width: 50%;
+}
+.labels{
+    text-align: center;
 }

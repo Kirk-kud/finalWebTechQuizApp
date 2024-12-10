@@ -41,7 +41,7 @@
                         }
 
                         $response['success'] = 'Login successful';
-                        header("Location: dashboard.php");
+                        header("Location: ../index.php");
                     } else {
                         $response['error'] = 'Invalid email, try again';
                     }

@@ -7,6 +7,7 @@
     <body>
     <div class="container">
         <div class="left_div">
+            <br><br><br>
             <div class="top_bar">
 
                     <img src="../assets/images/quiz_quest_logo_black.png" alt="Welcome Logo" id="logo">
@@ -24,6 +25,7 @@
                                data-parsley-required-message="Email is required." data-parsley-type-message="Please enter a valid email address.">
                         <br>
                     </div>
+                    <br><br>
 
                     <div class="form_elements" id="sub_div">
                         <label for="password">Password</label>
@@ -44,7 +46,7 @@
             </div>
         </div>
         <div class="right_div">
-            <img src="../assets/images/login_image_2.jpg" alt="Login Image" id="login_image">
+            <img src="../assets/images/nice_login.jpg" alt="Login Image" id="login_image">
         </div>
 
 

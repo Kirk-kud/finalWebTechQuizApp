@@ -52,7 +52,7 @@ include "../db/config.php";
 
                     if ($statement->execute()) {
                         $response["error"] = "Registration successful.";
-                        header("Location: view/login.php");
+                        header("Location: ../view/login.php");
                         exit();
                     }
                     else{
