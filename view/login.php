@@ -44,7 +44,7 @@
             </div>
         </div>
         <div class="right_div">
-            <img src="https://toppng.com/uploads/preview/books-library-shelves-lighting-11570081219wwscdinbok.jpg" alt="Login Image" id="login_image">
+            <img src="../assets/images/login_image_2.jpg" alt="Login Image" id="login_image">
         </div>
 
 

@@ -16,7 +16,7 @@
         }
         else{
             try{
-                $stmt = $conn->prepare("SELECT id, fname, lname, password, role FROM users WHERE email = ?");
+                $stmt = $conn->prepare("SELECT user_id, fname, lname, password_hash, role FROM users WHERE email = ?");
                 $stmt->bind_param("s", $email);
                 $stmt->execute();
                 $stmt->store_result();
