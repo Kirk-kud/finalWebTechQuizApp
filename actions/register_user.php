@@ -54,12 +54,14 @@ include "../db/config.php";
                     else{
                         $response["error"] = "Registration failed.";
                         var_dump($statement->error);
-                        var_dump($response);;
+                        var_dump($response);
+                        header("Location: ../view/signup.php");
                     }
                 }
             } catch (Exception $e){
                 $response["error"] = "Error: " . $e->getMessage();
                 var_dump($response);
+                header("Location: ../view/signup.php");
             }
         }
 

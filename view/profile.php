@@ -216,8 +216,8 @@ include "../db/config.php";
             <?php echo strtoupper(substr($user_data['fname'], 0, 1)); ?>
         </div>
         <div class="profile-info">
-            <div class="profile-name"><?php echo htmlspecialchars($user_data['fname'] . ' ' . $user_data['lname']); ?></div>
-            <div class="profile-email"><?php echo htmlspecialchars($user_data['email']); ?></div>
+            <div class="profile-name" style="font-family: 'Inter'; font-weight: 250;"><?php echo htmlspecialchars($user_data['fname'] . ' ' . $user_data['lname']); ?></div>
+            <div class="profile-email" style="font-family: 'Inter'; font-weight: 300;"><?php echo htmlspecialchars($user_data['email']); ?></div>
         </div>
     </div>
 

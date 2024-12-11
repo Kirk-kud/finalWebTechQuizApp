@@ -8,8 +8,11 @@
     <div class="container">
         <div class="left_div">
             <h1 style="text-align: center; font-family: 'Arial Rounded MT Bold', Arial; font-weight: 400;">
-                Welcome Back!
+                Welcome Back, take a seat!
             </h1>
+<!--            <h3 style="text-align: center; font-family: 'Arial Rounded MT Bold', Arial; font-weight: 300;">-->
+<!--                ...take a seat...-->
+<!--            </h3>-->
 
             <div class="top_bar">
                     <img src="../assets/images/quiz_quest_logo_black.png" alt="Welcome Logo" id="logo">
@@ -26,7 +29,6 @@
                         <input type="email" name="user_email" id="useremail" placeholder="Enter Email" required data-parsley-required="true" data-parsley-type="email" data-parsley-trigger="change"
                                data-parsley-pattern="/^(([^<>()\[\]\\.,;:\s@]+(\.[^<>()\[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/"
                                data-parsley-required-message="Email is required." data-parsley-type-message="Please enter a valid email address.">
-                        <br>
                     </div>
 
                     <div class="form_elements" id="sub_div">
@@ -34,7 +36,6 @@
                         <input type="password" name="password" id="password" placeholder="Enter Password" required data-parsley-required="true" data-parsley-minlength="8"
                                data-parsley-pattern="/^(?=.*[A-Z])(?=.*\d.*\d.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/" data-parsley-trigger="keyup" data-parsley-required-message="Password is required." data-parsley-minlength-message="Password must be at least 8 characters long."
                                data-parsley-pattern-message="Password must contain at least one uppercase and one lowercase letter.">
-                        <br>
                     </div>
 
                     <!-- Add a remember me -->
@@ -48,7 +49,7 @@
             </div>
         </div>
         <div class="right_div">
-            <img src="../assets/images/nice_login.jpg" alt="Login Image" id="login_image">
+            <img src="../assets/images/welcome_back.jpg" alt="Login Image" id="login_image">
         </div>
 
 

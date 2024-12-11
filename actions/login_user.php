@@ -44,11 +44,13 @@
                         header("Location: ../index.php");
                     } else {
                         $response['error'] = 'Invalid email, try again';
+                        header("Location: ../view/login.php?error=Invalid email or password, try again");
                     }
                 }
             }
             catch(Exception $e){
                 $response['error'] = $e->getMessage();
+                header("Location: ../view/login.php?error");
             }
         }
     }

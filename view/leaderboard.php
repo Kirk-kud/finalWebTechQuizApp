@@ -152,7 +152,7 @@
     </nav>
 
     <div class="content">
-        <h1>Leaderboard</h1>
+        <h1 style="font-weight: 300; font-size: 3.5rem; font-family: 'Inter';">Leaderboard</h1>
         <p>Welcome to the Quiz Quest Leaderboard! <br>Here you can see the top performers and track your progress.</p>
 
         <div class="leaderboard-section">
