@@ -41,6 +41,7 @@ include "../db/config.php";
                     // using bcrypt
 
                     $role = 2; // common user
+                    date_default_timezone_set('UTC');
                     $timestamp = date("Y-m-d H:i:s"); // timestamp for creation
 
                     $statement = $conn->prepare("INSERT INTO users (email, password_hash, fname, lname, role, registration_date) values (?, ?, ?, ?, ?, ?)");

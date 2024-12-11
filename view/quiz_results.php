@@ -174,6 +174,9 @@ $answers_result = $stmt->get_result();
         <?php while($answer = $answers_result->fetch_assoc()): ?>
             <?php
             $options = json_decode($answer['options'], true);
+            // Adjust for 1-based indexing by subtracting 1 from the database values
+            $selected_index = $answer['selected_option'] - 1;
+            $correct_index = $answer['correct_option'] - 1;
             $is_correct = $answer['selected_option'] == $answer['correct_option'];
             ?>
             <div class="question-review <?php echo $is_correct ? 'correct' : 'incorrect'; ?>">
@@ -181,14 +184,15 @@ $answers_result = $stmt->get_result();
                 <div class="option-list">
                     <?php foreach($options as $index => $option): ?>
                         <div class="option <?php
-                        echo $index == $answer['selected_option'] ? 'selected' : '';
-                        echo $index == $answer['correct_option'] ? 'correct-answer' : '';
+                        // Use adjusted indexes for comparison
+                        echo $index == $selected_index ? 'selected' : '';
+                        echo $index == $correct_index ? 'correct-answer' : '';
                         ?>">
                             <?php echo htmlspecialchars($option); ?>
-                            <?php if($index == $answer['selected_option']): ?>
+                            <?php if($index == $selected_index): ?>
                                 (Your Answer)
                             <?php endif; ?>
-                            <?php if($index == $answer['correct_option']): ?>
+                            <?php if($index == $correct_index): ?>
                                 (Correct Answer)
                             <?php endif; ?>
                         </div>

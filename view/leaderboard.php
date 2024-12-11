@@ -171,23 +171,27 @@
                     exit();
                 }
                 include "../db/config.php";
-
                 try {
-                    $stmt = $conn->prepare("SELECT l.id, u.fname, u.lname, q.name AS quiz_name, l.high_score, DENSE_RANK() OVER (ORDER BY l.high_score DESC) as rank FROM leaderboard l JOIN users u ON l.user_id = u.user_id JOIN quizzes q ON l.quiz_id = q.id ORDER BY l.high_score DESC LIMIT 10");
+                    $stmt = $conn->prepare("SELECT l.id, u.fname, u.lname, q.name AS quiz_name, l.high_score, 
+                                             DENSE_RANK() OVER (ORDER BY l.high_score DESC) as rank 
+                                                FROM leaderboard l 
+                                            JOIN users u ON l.user_id = u.user_id 
+                                    JOIN quizzes q ON l.quiz_id = q.id 
+                            LIMIT 10");
                     $stmt->execute();
-
-                    $rank = 1;
 
                     while ($row = $stmt->fetch()) {
                         echo "<tr>";
-                        echo "<td>" . htmlspecialchars($rank++) . "</td>";
+                        //echo "<td>" . htmlspecialchars($row['rank']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['fname'] . ' ' . $row['lname']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['high_score']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['quiz_name']) . "</td>";
                         echo "</tr>";
                     }
-                } catch(Exception $e) {
-                    echo "Error: " . $e->getMessage();
+                } catch (Exception $e) {
+                    echo "Database Error: " . $e->getMessage();
                 }
+
                 ?>
                 </tbody>
             </table>

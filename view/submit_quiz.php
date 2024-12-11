@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id']) || !isset($_POST)) {
 
 $user_id = $_SESSION['user_id'];
 $quiz_id = null;
-$score = 0;
+$correct_answers = 0;
 $total_questions = 0;
 $answers = [];
 
@@ -23,6 +23,9 @@ try {
         if (strpos($key, 'question_') === 0) {
             $question_id = substr($key, 9); // Remove 'question_' prefix
 
+            // Convert zero-based index from frontend to one-based for database
+            $selected_option = intval($value) + 1;
+
             // Get quiz_id from the first question if not set
             if ($quiz_id === null) {
                 $quiz_query = "SELECT quiz_id FROM questions WHERE id = ?";
@@ -34,8 +37,8 @@ try {
                 $quiz_id = $quiz_data['quiz_id'];
             }
 
-            // Store answer
-            $answers[$question_id] = $value;
+            // Store answer with adjusted indexing
+            $answers[$question_id] = $selected_option;
         }
     }
 
@@ -51,13 +54,16 @@ try {
         throw new Exception('All questions must be answered');
     }
 
-    // Calculate score
+    // Calculate score - no need to adjust indexes here since both values are now 1-based
     while ($question = $questions_result->fetch_assoc()) {
         if (isset($answers[$question['id']]) &&
             $answers[$question['id']] == $question['correct_option']) {
-            $score++;
+            $correct_answers++;
         }
     }
+
+    // Calculate percentage score (rounded to nearest integer)
+    $score = $correct_answers;
 
     // Create user progress entry
     $progress_query = "INSERT INTO user_progress (user_id, quiz_id, score) VALUES (?, ?, ?)";
@@ -66,7 +72,7 @@ try {
     $stmt->execute();
     $progress_id = $conn->insert_id;
 
-    // Store individual answers in user_sessions
+    // Store individual answers in user_sessions (answers are already 1-based)
     foreach ($answers as $question_id => $selected_option) {
         $session_query = "INSERT INTO user_sessions (user_id, quiz_id, question_id, selected_option) 
                          VALUES (?, ?, ?, ?)";
@@ -92,7 +98,8 @@ try {
         'success' => true,
         'session_id' => $progress_id,
         'score' => $score,
-        'total' => $total_questions
+        'total' => $total_questions,
+        'correct' => $correct_answers
     ]);
 
 } catch (Exception $e) {
@@ -105,6 +112,5 @@ try {
         'message' => $e->getMessage()
     ]);
 }
-
 $conn->close();
 ?>
