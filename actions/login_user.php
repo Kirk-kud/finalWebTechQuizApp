@@ -34,14 +34,17 @@
                         // Checking for the role of the user
                         if ($role == 1) {
                             // this is a super admin
+                            $response['success'] = 'Login successful';
+                            header("Location: ../view/admin/dashboard.php");
                         } elseif ($role == 2) {
-                            // this is a regular admin
+                            // this is a regular user
+                            $response['success'] = 'Login successful';
+                            header("Location: ../index.php");
                         } elseif ($role == 3) {
                             // this is a user
                         }
 
-                        $response['success'] = 'Login successful';
-                        header("Location: ../index.php");
+
                     } else {
                         $response['error'] = 'Invalid email, try again';
                         header("Location: ../view/login.php?error=Invalid email or password, try again");

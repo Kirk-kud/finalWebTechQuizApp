@@ -15,7 +15,7 @@ body {
     align-items: center;
     padding: 0.5rem;
     box-sizing: border-box;
-    overflow: hidden; /* Prevent internal scrolling */
+    overflow: hidden;
     transform: scale(0.8);
 }
 
@@ -25,6 +25,7 @@ body {
     justify-content: center;
     align-items: center;
     padding: 0;
+    overflow: visible;
 }
 
 #login_image {
