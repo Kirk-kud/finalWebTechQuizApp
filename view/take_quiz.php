@@ -15,7 +15,7 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
 $quiz_id = $_GET['id'];
 $user_id = $_SESSION['user_id'];
 
-// Fetch quiz details
+// Fetch quiz details including duration
 $quiz_query = "SELECT q.*, c.name as category_name 
                FROM quizzes q 
                JOIN categories c ON q.category_id = c.id 
@@ -50,72 +50,32 @@ while($question = $questions_result->fetch_assoc()) {
     <title><?php echo htmlspecialchars($quiz['name']); ?></title>
     <style>
         /* Previous styles remain */
-        .quiz-container {
-            max-width: 800px;
-            margin: 15vh auto 2rem;
-            padding: 2rem;
+        .timer-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
             background: white;
+            padding: 1rem;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 100;
         }
-        .question {
-            display: none;
-            margin-bottom: 2rem;
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
         }
-        .question.active {
-            display: block;
+        .timer.warning {
+            color: #ff9800;
         }
-        .options {
-            margin: 1rem 0;
+        .timer.danger {
+            color: #f44336;
+            animation: pulse 1s infinite;
         }
-        .option {
-            display: block;
-            padding: 1rem;
-            margin: 0.5rem 0;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .option:hover {
-            background-color: #f0f0f0;
-        }
-        .option.selected {
-            border-color: #2196F3;
-            background-color: #e3f2fd;
-        }
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
-        }
-        .nav-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        #prevBtn {
-            background-color: #666;
-            color: white;
-        }
-        #nextBtn {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background-color: #ddd;
-            margin: 1rem 0;
-            border-radius: 5px;
-        }
-        .progress {
-            height: 100%;
-            background-color: #4CAF50;
-            border-radius: 5px;
-            transition: width 0.3s;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -124,9 +84,14 @@ while($question = $questions_result->fetch_assoc()) {
     <!-- Previous navbar content remains the same -->
 </nav>
 
+<div class="timer-container">
+    Time Remaining: <span class="timer" id="timer"></span>
+</div>
+
 <div class="quiz-container">
     <h1><?php echo htmlspecialchars($quiz['name']); ?></h1>
     <p>Category: <?php echo htmlspecialchars($quiz['category_name']); ?></p>
+    <p>Duration: <?php echo htmlspecialchars($quiz['duration_minutes']); ?> minutes</p>
 
     <div class="progress-bar">
         <div class="progress" style="width: 0%"></div>
@@ -162,17 +127,49 @@ while($question = $questions_result->fetch_assoc()) {
 <script>
     let currentQuestion = 0;
     const totalQuestions = <?php echo count($questions); ?>;
+    const quizDuration = <?php echo $quiz['duration_minutes']; ?> * 60; // Convert to seconds
+    let timeRemaining = quizDuration;
+    let timerInterval;
+
+    // Start timer when page loads
+    startTimer();
+
+    function startTimer() {
+        const timerElement = document.getElementById('timer');
+        const startTime = Date.now();
+
+        timerInterval = setInterval(() => {
+            const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+            timeRemaining = quizDuration - elapsedSeconds;
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                submitQuiz(true); // Auto-submit when time runs out
+                return;
+            }
+
+            // Update timer display
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Add warning classes
+            if (timeRemaining <= 60) { // Last minute
+                timerElement.classList.add('danger');
+            } else if (timeRemaining <= 180) { // Last 3 minutes
+                timerElement.classList.add('warning');
+            }
+        }, 1000);
+    }
 
     function updateQuestion() {
-        // Update progress bar
+        // Previous update logic remains
         const progress = ((currentQuestion + 1) / totalQuestions) * 100;
         document.querySelector('.progress').style.width = `${progress}%`;
 
-        // Hide all questions and show current
         document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
         document.querySelector(`[data-question="${currentQuestion}"]`).classList.add('active');
 
-        // Update buttons
         document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'block';
         document.getElementById('nextBtn').innerText = currentQuestion === totalQuestions - 1 ? 'Submit' : 'Next';
     }
@@ -189,12 +186,17 @@ while($question = $questions_result->fetch_assoc()) {
             currentQuestion++;
             updateQuestion();
         } else {
-            // Submit quiz
-            submitQuiz();
+            submitQuiz(false);
         }
     });
 
-    function submitQuiz() {
+    function submitQuiz(isTimeUp = false) {
+        clearInterval(timerInterval); // Stop the timer
+
+        if (isTimeUp) {
+            alert('Time is up! Your quiz will be submitted automatically.');
+        }
+
         const formData = new FormData(document.getElementById('quizForm'));
         fetch('submit_quiz.php', {
             method: 'POST',
@@ -205,16 +207,28 @@ while($question = $questions_result->fetch_assoc()) {
                 if(data.success) {
                     window.location.href = `quiz_results.php?id=${data.session_id}`;
                 } else {
-                    alert('Please answer all questions before submitting.');
+                    alert(isTimeUp ? 'An error occurred while submitting your quiz.' : 'Please answer all questions before submitting.');
+                    if (!isTimeUp) {
+                        startTimer(); // Restart timer if submission failed and it wasn't due to time up
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('An error occurred while submitting the quiz.');
+                if (!isTimeUp) {
+                    startTimer(); // Restart timer if submission failed and it wasn't due to time up
+                }
             });
     }
 
-    // Highlight selected options
+    // Prevent leaving the page accidentally
+    window.addEventListener('beforeunload', (e) => {
+        e.preventDefault();
+        e.returnValue = '';
+    });
+
+    // Previous option selection logic remains
     document.querySelectorAll('.option').forEach(option => {
         option.addEventListener('click', function() {
             const questionDiv = this.closest('.question');
