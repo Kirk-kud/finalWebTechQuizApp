@@ -50,6 +50,73 @@ while($question = $questions_result->fetch_assoc()) {
     <title><?php echo htmlspecialchars($quiz['name']); ?></title>
     <style>
         /* Previous styles remain */
+        .quiz-container {
+            max-width: 800px;
+            margin: 15vh auto 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .question {
+            display: none;
+            margin-bottom: 2rem;
+        }
+        .question.active {
+            display: block;
+        }
+        .options {
+            margin: 1rem 0;
+        }
+        .option {
+            display: block;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+        .option.selected {
+            border-color: #2196F3;
+            background-color: #e3f2fd;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        #prevBtn {
+            background-color: #666;
+            color: white;
+        }
+        #nextBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #ddd;
+            margin: 1rem 0;
+            border-radius: 5px;
+        }
+        .progress {
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
         .timer-container {
             position: fixed;
             top: 80px;
