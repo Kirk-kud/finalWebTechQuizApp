@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+//if (!isset($_SESSION['user_id'])) {
+//    header("Location: ../index.php");
+//    exit();
+//}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -80,7 +88,7 @@
         }
         table {
             width: 80%;
-            max-width: 600px;
+            max-width: 800px;
             border-collapse: collapse;
             background: white;
             border-radius: 10px;
@@ -106,6 +114,25 @@
             background-color: rgba(255, 152, 0, 0.2);
             transition: background-color 0.3s ease;
         }
+        .rank-1 {
+            background-color: rgba(255, 215, 0, 0.2) !important;
+            font-weight: bold;
+        }
+        .rank-2 {
+            background-color: rgba(192, 192, 192, 0.2) !important;
+            font-weight: bold;
+        }
+        .rank-3 {
+            background-color: rgba(205, 127, 50, 0.2) !important;
+            font-weight: bold;
+        }
+        .empty-message {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
         @media (max-width: 768px) {
             .navbar {
@@ -125,23 +152,29 @@
             table {
                 width: 95%;
             }
+            table th, table td {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
 <div class="page-container">
     <nav class="navbar">
-        <div class="logo"><img style="width:6rem; height: 6rem;" src="../assets/images/quiz_quest_logo_white.png"></div>
+        <div class="logo">
+            <a href="../index.php">
+                <img style="width:6rem; height: 6rem;" src="../assets/images/quiz_quest_logo_white.png" alt="LOGO">
+            </a>
+        </div>
         <div class="links">
             <a href="../index.php">Home</a>
             <a href="../view/about.html">About</a>
             <?php
-            session_start();
             if(!isset($_SESSION['user_id'])){
                 echo "<a href='../view/login.php'>Login</a>";
                 echo "<a href='../view/signup.php'>Sign Up</a>";
-            }
-            else{
+            } else {
                 echo "<a href='quizzes.php'>Quizzes</a>";
                 echo "<a href='leaderboard.php'>Leaderboard</a>";
                 echo "<a href='profile.php'>Profile</a>";
@@ -161,37 +194,77 @@
                 <thead>
                 <tr>
                     <th>Rank</th>
-                    <th>Name</th>
-                    <th>Total Points</th>
+                    <th>Username</th>
+                    <th>Quiz</th>
+                    <th>Score</th>
                 </tr>
                 </thead>
+                <tbody>
                 <?php
-                if (!isset($_SESSION['user_id'])){
-                    header("Location: ../index.php");
-                    exit();
-                }
+
+
                 include "../db/config.php";
                 try {
-                    $stmt = $conn->prepare("SELECT l.id, u.fname, u.lname, q.name AS quiz_name, l.high_score, 
-                                             DENSE_RANK() OVER (ORDER BY l.high_score DESC) as rank 
-                                                FROM leaderboard l 
-                                            JOIN users u ON l.user_id = u.user_id 
-                                    JOIN quizzes q ON l.quiz_id = q.id 
-                            LIMIT 10");
-                    $stmt->execute();
+                    $stmt = $conn->prepare("
+                        WITH RankedScores AS (
+                            SELECT 
+                                l.user_id, 
+                                CONCAT(u.fname, ' ', u.lname) as username, 
+                                q.name AS quiz_name, 
+                                MAX(l.high_score) as high_score,
+                                (SELECT COUNT(*) FROM questions WHERE quiz_id = q.id) as total_questions,
+                                DENSE_RANK() OVER (ORDER BY MAX(l.high_score) DESC) as rank
+                            FROM leaderboard l 
+                            JOIN users u ON l.user_id = u.user_id 
+                            JOIN quizzes q ON l.quiz_id = q.id 
+                            GROUP BY l.user_id, q.id, u.fname, u.lname, q.name
+                        ), 
+                        UniqueTopScores AS (
+                            SELECT 
+                                rank, 
+                                username, 
+                                quiz_name, 
+                                ROUND((high_score / total_questions) * 100, 1) as score_percentage,
+                                ROW_NUMBER() OVER (PARTITION BY quiz_name ORDER BY high_score DESC) as quiz_rank
+                            FROM RankedScores
+                        )
+                        SELECT 
+                            rank, 
+                            username, 
+                            quiz_name, 
+                            score_percentage 
+                        FROM UniqueTopScores 
+                        WHERE quiz_rank = 1 
+                        ORDER BY rank ASC 
+                        LIMIT 10;
+                    ");
 
-                    while ($row = $stmt->fetch()) {
-                        echo "<tr>";
-                        //echo "<td>" . htmlspecialchars($row['rank']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['fname'] . ' ' . $row['lname']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['high_score']) . "</td>";
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $hasResults = false;
+
+                    while ($row = $result->fetch_assoc()) {
+                        $hasResults = true;
+                        $rankClass = '';
+                        if ($row['rank'] == 1) $rankClass = 'rank-1';
+                        else if ($row['rank'] == 2) $rankClass = 'rank-2';
+                        else if ($row['rank'] == 3) $rankClass = 'rank-3';
+
+                        echo "<tr class='" . $rankClass . "'>";
+                        echo "<td>" . htmlspecialchars($row['rank']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['username']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['quiz_name']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['score_percentage']) . "%</td>";
                         echo "</tr>";
                     }
-                } catch (Exception $e) {
-                    echo "Database Error: " . $e->getMessage();
-                }
 
+                    if (!$hasResults) {
+                        echo "<tr><td colspan='4' class='empty-message'>No quiz attempts recorded yet. Be the first to make it to the leaderboard!</td></tr>";
+                    }
+
+                } catch (Exception $e) {
+                    echo "<tr><td colspan='4' class='empty-message'>An error occurred while loading the leaderboard. Please try again later.</td></tr>";
+                }
                 ?>
                 </tbody>
             </table>

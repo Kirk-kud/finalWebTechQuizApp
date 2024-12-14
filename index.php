@@ -22,7 +22,7 @@
         .hero {
             position: relative;
             height: 100vh;
-            background: url('https://images.unsplash.com/photo-1501503069356-3c6b82a17d89?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
+            background: url('assets/images/home.jpg') no-repeat center center/cover;
             display: flex;
             flex-direction: column;
         }
@@ -109,7 +109,7 @@
 <div class="page-container">
     <div class="hero">
         <nav class="navbar">
-            <div class="logo"><hr><hr><img style="width:6rem; height: 6rem;" src="assets/images/quiz_quest_logo_white.png"><hr><hr></div>
+            <div class="logo"><a href="index.php"><img style="width:6rem; height: 6rem;" src="assets/images/quiz_quest_logo_white.png"></a></div>
             <div class="links">
                 <a href="index.php">Home</a>
                 <a href="view/about.html">About</a>
@@ -120,9 +120,14 @@
                     echo "<a href='view/signup.php'>Sign Up</a>";
                 }
                 else{
-                    echo "<a href='view/quizzes.php'>Quizzes</a>";
+                    if ($_SESSION['role'] != '1'){
+                        echo "<a href='view/quizzes.php'>Quizzes</a>";
+                    }
                     echo "<a href='view/leaderboard.php'>Leaderboard</a>";
                     echo "<a href='view/profile.php'>Profile</a>";
+                    if ($_SESSION['role'] == '1'){
+                        echo "<a href='view/admin/dashboard.php'>Dashboard</a>";
+                    }
                     echo "<a href='actions/logout.php'>Logout</a>";
                 }
                 ?>

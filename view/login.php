@@ -183,7 +183,7 @@
                 <img src="../assets/images/quiz_quest_logo_black.png" alt="Welcome Logo" id="logo">
             </div>
 
-            <h1 class="welcome-text">Welcome Back</h1>
+            <h1 class="welcome-text">Welcome Back,</h1>
             <h2 class="subtitle">take a seat!</h2>
 
             <div class="form_container">

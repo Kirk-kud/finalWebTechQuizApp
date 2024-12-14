@@ -57,7 +57,30 @@ if ($result->num_rows > 0) {
             background-color: #f4f4f4;
         }
         .navbar {
-            /* Previous navbar styles remain the same */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 0.5rem;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .navbar a:hover {
+            color: #ff9800;
+        }
+        .navbar .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
         }
         .page-container {
             max-width: 1200px;
@@ -131,10 +154,19 @@ if ($result->num_rows > 0) {
 </head>
 <body>
 <nav class="navbar">
-    <!-- Previous navbar content remains the same -->
+    <div class="logo"><a href="../index.php"><img style="width:6rem; height: 6rem;" src="../assets/images/quiz_quest_logo_white.png"></a></div>
+    <div class="links">
+        <a href="../index.php">Home</a>
+        <a href="../view/about.html">About</a>
+        <a href="../view/quizzes.php">Quizzes</a>
+        <a href="leaderboard.php">Leaderboard</a>
+        <a href="profile.php">Profile</a>
+        <a href="../actions/logout.php">Logout</a>
+    </div>
 </nav>
 
 <div class="page-container">
+    <br><br><br>
     <h1>Available Quizzes</h1>
 
     <div class="categories-container">

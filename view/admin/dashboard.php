@@ -1,10 +1,61 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id']) && ($_SESSION['role'] != 1)){
+// Include database connection
+include '../../db/config.php';
+
+// Redirect if not an admin
+if (!isset($_SESSION['user_id']) || ($_SESSION['role'] != 1)) {
     header("Location: ../../index.php");
     exit();
 }
+
+// Fetch system-wide statistics
+$stats = [];
+
+// Total Users
+$userQuery = "SELECT 
+    COUNT(*) as total_users,
+    SUM(CASE WHEN role = 2 THEN 1 ELSE 0 END) as regular_users,
+    SUM(CASE WHEN role = 1 THEN 1 ELSE 0 END) as admin_users,
+    DATE_FORMAT(MIN(registration_date), '%Y-%m-%d') as first_user_date
+FROM users";
+$userResult = mysqli_query($conn, $userQuery);
+$stats['users'] = mysqli_fetch_assoc($userResult);
+
+// Quiz Statistics
+$quizQuery = "SELECT 
+    COUNT(*) as total_quizzes,
+    (SELECT COUNT(*) FROM categories) as total_categories,
+    (SELECT COUNT(*) FROM questions) as total_questions
+FROM quizzes";
+$quizResult = mysqli_query($conn, $quizQuery);
+$stats['quizzes'] = mysqli_fetch_assoc($quizResult);
+
+// User Progress and Leaderboard
+$progressQuery = "SELECT 
+    COUNT(DISTINCT user_id) as users_completed_quizzes,
+    COUNT(*) as total_quiz_attempts,
+    MAX(score) as highest_score,
+    ROUND(AVG(score), 2) as average_score
+FROM user_progress";
+$progressResult = mysqli_query($conn, $progressQuery);
+$stats['progress'] = mysqli_fetch_assoc($progressResult);
+
+// Most Popular Quizzes
+$popularQuizQuery = "SELECT 
+    q.name, 
+    q.category_id,
+    c.name as category_name,
+    COUNT(up.quiz_id) as attempt_count
+FROM quizzes q
+JOIN categories c ON q.category_id = c.id
+LEFT JOIN user_progress up ON q.id = up.quiz_id
+GROUP BY q.id
+ORDER BY attempt_count DESC
+LIMIT 5";
+$popularQuizResult = mysqli_query($conn, $popularQuizQuery);
+$stats['popular_quizzes'] = mysqli_fetch_all($popularQuizResult, MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +65,7 @@ if (!isset($_SESSION['user_id']) && ($_SESSION['role'] != 1)){
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        <?php //include 'dashboard.php'; // Reuse existing styles ?>
         :root {
             --primary-orange: #FF8C00;    /* Dark orange */
             --secondary-orange: #FFA500;   /* Regular orange for hover */
@@ -124,6 +176,62 @@ if (!isset($_SESSION['user_id']) && ($_SESSION['role'] != 1)){
                 margin-left: 0;
             }
         }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-orange);
+            padding-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark-gray);
+        }
+
+        .stat-description {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .popular-quizzes {
+            margin-top: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .popular-quiz-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .popular-quiz-item:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -143,8 +251,57 @@ if (!isset($_SESSION['user_id']) && ($_SESSION['role'] != 1)){
 
 <!-- Main Content -->
 <main class="main-content" id="main">
-    <h2>Welcome to Dashboard</h2>
-    <p>Your content goes here...</p>
+    <h2 style="text-align: center;">System-Wide Statistics</h2>
+
+    <div class="stats-grid">
+        <!-- User Statistics -->
+        <div class="stat-card">
+            <h3><i class="fas fa-users"></i> User Statistics</h3>
+            <div class="stat-value"><?php echo $stats['users']['total_users']; ?></div>
+            <div class="stat-description">Total Users</div>
+            <p>
+                Regular Users: <?php echo $stats['users']['regular_users']; ?><br>
+                Admin Users: <?php echo $stats['users']['admin_users']; ?><br>
+                First User Registered: <?php echo $stats['users']['first_user_date']; ?>
+            </p>
+        </div>
+
+        <!-- Quiz Statistics -->
+        <div class="stat-card">
+            <h3><i class="fas fa-question-circle"></i> Quiz Overview</h3>
+            <div class="stat-value"><?php echo $stats['quizzes']['total_quizzes']; ?></div>
+            <div class="stat-description">Total Quizzes</div>
+            <p>
+                Categories: <?php echo $stats['quizzes']['total_categories']; ?><br>
+                Total Questions: <?php echo $stats['quizzes']['total_questions']; ?>
+            </p>
+        </div>
+
+        <!-- User Progress -->
+        <div class="stat-card">
+            <h3><i class="fas fa-chart-line"></i> User Progress</h3>
+            <div class="stat-value"><?php echo $stats['progress']['users_completed_quizzes']; ?></div>
+            <div class="stat-description">Users Completed Quizzes</div>
+            <p>
+                Total Quiz Attempts: <?php echo $stats['progress']['total_quiz_attempts']; ?><br>
+                Highest Score: <?php echo $stats['progress']['highest_score']; ?><br>
+                Average Score: <?php echo $stats['progress']['average_score']; ?>
+            </p>
+        </div>
+    </div>
+
+    <!-- Most Popular Quizzes -->
+    <div class="popular-quizzes">
+        <h3><i class="fas fa-trophy"></i> Most Popular Quizzes</h3>
+        <?php foreach($stats['popular_quizzes'] as $quiz): ?>
+            <div class="popular-quiz-item">
+                <span><?php echo htmlspecialchars($quiz['name']); ?>
+                    <small>(<?php echo htmlspecialchars($quiz['category_name']); ?>)</small>
+                </span>
+                <strong><?php echo $quiz['attempt_count']; ?> Attempts</strong>
+            </div>
+        <?php endforeach; ?>
+    </div>
 </main>
 
 <script>

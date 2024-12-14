@@ -160,42 +160,56 @@ include "../db/config.php";
 </head>
 <body>
 <?php
-    // Fetch user data
-    $user_id = $_SESSION['user_id'];
-    $user_query = "SELECT * FROM users WHERE user_id = ?";
-    $stmt = $conn->prepare($user_query);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $user_result = $stmt->get_result();
-    $user_data = $user_result->fetch_assoc();
+// Fetch user data
+$user_id = $_SESSION['user_id'];
+$user_query = "SELECT * FROM users WHERE user_id = ?";
+$stmt = $conn->prepare($user_query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$user_result = $stmt->get_result();
+$user_data = $user_result->fetch_assoc();
 
-    // Fetch user statistics
-    $stats_query = "SELECT 
-            COUNT(DISTINCT quiz_id) as total_quizzes,
-            MAX(score) as highest_score,
-            ROUND(AVG(score), 1) as average_score
-            FROM user_progress 
-            WHERE user_id = ?";
-    $stmt = $conn->prepare($stats_query);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $stats_result = $stmt->get_result();
-    $stats_data = $stats_result->fetch_assoc();
+// Fetch user statistics with percentage calculations
+$stats_query = "SELECT 
+            COUNT(DISTINCT up.quiz_id) as total_quizzes,
+            MAX(ROUND((up.score * 100.0) / (
+                SELECT COUNT(*) 
+                FROM questions q2 
+                WHERE q2.quiz_id = up.quiz_id
+            ))) as highest_score,
+            ROUND(AVG(
+                (up.score * 100.0) / (
+                    SELECT COUNT(*) 
+                    FROM questions q3 
+                    WHERE q3.quiz_id = up.quiz_id
+                )
+            ), 1) as average_score
+            FROM user_progress up 
+            WHERE up.user_id = ?";
+$stmt = $conn->prepare($stats_query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$stats_result = $stmt->get_result();
+$stats_data = $stats_result->fetch_assoc();
 
-    // Fetch recent activity
-    $activity_query = "SELECT 
+// Fetch recent activity with percentage calculations
+$activity_query = "SELECT 
             q.name as quiz_name, 
-            up.score, 
+            ROUND((up.score * 100.0) / (
+                SELECT COUNT(*) 
+                FROM questions qs 
+                WHERE qs.quiz_id = q.id
+            )) as score, 
             up.completed_at
             FROM user_progress up 
             JOIN quizzes q ON up.quiz_id = q.id 
             WHERE up.user_id = ? 
             ORDER BY up.completed_at DESC 
             LIMIT 5";
-    $stmt = $conn->prepare($activity_query);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $activity_result = $stmt->get_result();
+$stmt = $conn->prepare($activity_query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$activity_result = $stmt->get_result();
 ?>
 
 <nav class="navbar">
@@ -211,6 +225,7 @@ include "../db/config.php";
 </nav>
 
 <div class="profile-container">
+    <br><br>
     <div class="profile-header">
         <div class="profile-avatar">
             <?php echo strtoupper(substr($user_data['fname'], 0, 1)); ?>
