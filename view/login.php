@@ -75,6 +75,7 @@
         .form_elements {
             margin-bottom: 1.5rem;
             width: 100%;
+            position: relative;
         }
 
         label {
@@ -165,6 +166,15 @@
             font-size: 0.8rem;
         }
 
+        .error {
+            color: red;
+            display: block;
+            margin-top: 5px;
+            font-size: 14px;
+            text-align: left;
+            width: 100%;
+        }
+
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -192,7 +202,6 @@
             }
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -206,7 +215,7 @@
             <h2 class="subtitle">take a seat!</h2>
 
             <div class="form_container">
-                <form class="login_form" method="post" action="../actions/login_user.php" data-parsley-validate>
+                <form class="login_form" method="post" action="../actions/login_user.php">
                     <div class="form_elements">
                         <label for="useremail">Email</label>
                         <input
@@ -215,30 +224,17 @@
                                 id="useremail"
                                 placeholder="Enter Email"
                                 required
-                                data-parsley-required="true"
-                                data-parsley-type="email"
-                                data-parsley-trigger="change"
-                                data-parsley-pattern="/^(([^<>()\[\]\\.,;:\s@]+(\.[^<>()\[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/"
-                                data-parsley-required-message="Email is required."
-                                data-parsley-type-message="Please enter a valid email address."
                         >
                     </div>
 
                     <div class="form_elements">
-                        <label for="password">Password</label>
+                        <label for="input_password">Password</label>
                         <input
                                 type="password"
                                 name="password"
                                 id="input_password"
                                 placeholder="Enter Password"
                                 required
-                                data-parsley-required="true"
-                                data-parsley-minlength="8"
-                                data-parsley-pattern="/^(?=.*[A-Z])(?=.*\d.*\d.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/"
-                                data-parsley-trigger="keyup"
-                                data-parsley-required-message="Password is required."
-                                data-parsley-minlength-message="Password must be at least 8 characters long."
-                                data-parsley-pattern-message="Password must contain at least one uppercase and one lowercase letter."
                         >
                         <div class="password-visibility">
                             <input
@@ -266,6 +262,7 @@
 </div>
 
 <script>
+    // Password visibility toggle
     function togglePasswordVisibility() {
         var passwordInput = document.getElementById("input_password");
         var showPasswordCheckbox = document.getElementById("show_password");
@@ -276,8 +273,53 @@
             passwordInput.type = "password";
         }
     }
-</script>
 
-<script src="../assets/js/sign_up_js.js"></script>
+    // Form validation
+    const form = document.querySelector('.login_form');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Remove any existing error messages
+        document.querySelectorAll('.error').forEach(function(error) {
+            error.remove();
+        });
+
+        let isValid = true;
+
+        // Email validation
+        const email_regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-z]{2,6}$/;
+        let email = document.getElementById("useremail");
+
+        if (!email_regex.test(email.value)) {
+            errorMessage('useremail', "Please enter a valid email address");
+            isValid = false;
+        }
+
+        // Password validation
+        const password_regex = /^(?=.*[A-Z])(?=.*\d{3,})(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{8,}$/;
+        let password = document.getElementById('input_password');
+
+        if (!password_regex.test(password.value)) {
+            errorMessage('input_password', "Password must be at least 8 characters long, include an uppercase letter, at least 3 digits, and a special character");
+            isValid = false;
+        }
+
+        if (isValid) {
+            console.log("Form is valid, ready to submit");
+            form.submit();
+        }
+    });
+
+    function errorMessage(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        const error = document.createElement("span");
+
+        error.innerHTML = message;
+        error.className = "error";
+
+        field.parentNode.appendChild(error);
+    }
+</script>
 </body>
 </html>
