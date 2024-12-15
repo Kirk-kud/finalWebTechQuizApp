@@ -147,6 +147,24 @@
             object-position: center;
         }
 
+        .password-visibility {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        .password-visibility input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        .password-visibility label {
+            margin-bottom: 0;
+            font-size: 0.8rem;
+        }
+
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -211,7 +229,7 @@
                         <input
                                 type="password"
                                 name="password"
-                                id="password"
+                                id="input_password"
                                 placeholder="Enter Password"
                                 required
                                 data-parsley-required="true"
@@ -222,6 +240,14 @@
                                 data-parsley-minlength-message="Password must be at least 8 characters long."
                                 data-parsley-pattern-message="Password must contain at least one uppercase and one lowercase letter."
                         >
+                        <div class="password-visibility">
+                            <input
+                                    type="checkbox"
+                                    id="show_password"
+                                    onclick="togglePasswordVisibility()"
+                            >
+                            <label for="show_password">Show Password</label>
+                        </div>
                     </div>
 
                     <button type="submit" name="login_submit" class="submit-btn">Login</button>
@@ -240,11 +266,16 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var form = document.querySelector('form');
-        var parsleyForm = new Parsley(form);
-    });
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById("input_password");
+        var showPasswordCheckbox = document.getElementById("show_password");
 
+        if (showPasswordCheckbox.checked) {
+            passwordInput.type = "text";
+        } else {
+            passwordInput.type = "password";
+        }
+    }
 </script>
 
 <script src="../assets/js/sign_up_js.js"></script>
