@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 14, 2024 at 02:41 PM
+-- Generation Time: Dec 15, 2024 at 04:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -74,9 +74,12 @@ INSERT INTO `leaderboard` (`id`, `user_id`, `quiz_id`, `high_score`, `achieved_a
 (7, 2, 4, 2, '2024-12-11 13:03:38'),
 (9, 2, 5, 3, '2024-12-11 13:27:53'),
 (10, 2, 13, 2, '2024-12-11 21:04:38'),
-(11, 2, 7, 3, '2024-12-11 21:13:08'),
 (12, 2, 13, 2, '2024-12-11 22:11:57'),
-(13, 2, 5, 3, '2024-12-11 22:12:18');
+(13, 2, 5, 3, '2024-12-11 22:12:18'),
+(14, 2, 8, 0, '2024-12-14 16:36:37'),
+(15, 2, 8, 1, '2024-12-14 16:53:18'),
+(16, 2, 13, 2, '2024-12-14 16:53:41'),
+(18, 2, 7, 4, '2024-12-15 12:29:12');
 
 -- --------------------------------------------------------
 
@@ -116,7 +119,9 @@ INSERT INTO `questions` (`id`, `quiz_id`, `question_text`, `options`, `correct_o
 (15, 5, 'What is the chemical symbol for Gold?', '[\"Ag\", \"Au\", \"Fe\", \"Cu\"]', 2, '2024-12-11 10:46:59', '2024-12-11 10:46:59'),
 (16, 12, 'What period is commonly referred to as the Middle Ages?', '[\"500-1500 CE\", \"0-500 CE\", \"1500-2000 CE\", \"1000-1200 CE\"]', 1, '2024-12-11 10:46:59', '2024-12-11 10:46:59'),
 (17, 12, 'Which system of social organization was prevalent in medieval Europe?', '[\"Democracy\", \"Feudalism\", \"Communism\", \"Capitalism\"]', 2, '2024-12-11 10:46:59', '2024-12-11 10:46:59'),
-(18, 12, 'What was the primary language of medieval European scholars?', '[\"French\", \"English\", \"Latin\", \"Greek\"]', 3, '2024-12-11 10:46:59', '2024-12-11 10:46:59');
+(18, 12, 'What was the primary language of medieval European scholars?', '[\"French\", \"English\", \"Latin\", \"Greek\"]', 3, '2024-12-11 10:46:59', '2024-12-11 10:46:59'),
+(19, 8, 'What does echo do?', '[\"print\",\"log to console\",\"clear terminal\",\"receive input\"]', 1, '2024-12-14 16:29:56', '2024-12-14 16:52:25'),
+(20, 7, 'x = 5  \r\ny = 2  \r\nprint(x ** y)', '[\" Divides x by y\",\"Multiplies x by y\",\" Raises x to the power of y\",\"Performs integer division of x by y\"]', 3, '2024-12-14 16:50:02', '2024-12-14 16:50:02');
 
 -- --------------------------------------------------------
 
@@ -131,29 +136,30 @@ CREATE TABLE `quizzes` (
   `description` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `duration_minutes` int(11) NOT NULL DEFAULT 3 COMMENT 'Duration of the quiz in minutes'
+  `duration_minutes` int(11) NOT NULL DEFAULT 3 COMMENT 'Duration of the quiz in minutes',
+  `is_active` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `quizzes`
 --
 
-INSERT INTO `quizzes` (`id`, `category_id`, `name`, `description`, `created_at`, `updated_at`, `duration_minutes`) VALUES
-(1, 1, 'Basic Algebra', 'Practice fundamental algebraic concepts and equations', '2024-12-11 10:46:58', '2024-12-11 10:46:58', 3),
-(2, 1, 'Geometry Fundamentals', 'Test your knowledge of shapes, angles, and spatial relationships', '2024-12-11 10:46:58', '2024-12-11 10:46:58', 3),
-(3, 1, 'Trigonometry Basics', 'Understanding sine, cosine, and triangular relationships', '2024-12-11 10:46:58', '2024-12-11 10:46:58', 3),
-(4, 2, 'Basic Physics', 'Understanding motion, forces, and energy', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(5, 2, 'Chemistry 101', 'Introduction to chemical elements and reactions', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(6, 2, 'Human Biology', 'Learn about human anatomy and biological systems', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(7, 3, 'Python Basics', 'Introduction to Python programming language', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(8, 3, 'JavaScript Fundamentals', 'Core concepts of JavaScript programming', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(9, 3, 'SQL Essentials', 'Database queries and management basics', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(10, 4, 'Ancient Civilizations', 'Explore the earliest human societies and their developments', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(11, 4, 'World War II', 'Major events and figures of the Second World War', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(12, 4, 'Medieval Europe', 'Life and events in European middle ages', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(13, 5, 'World Capitals', 'Test your knowledge of capital cities around the world', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(14, 5, 'Natural Wonders', 'Famous geographical landmarks and natural phenomena', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3),
-(15, 5, 'Countries and Borders', 'International boundaries and neighboring nations', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3);
+INSERT INTO `quizzes` (`id`, `category_id`, `name`, `description`, `created_at`, `updated_at`, `duration_minutes`, `is_active`) VALUES
+(1, 1, 'Basic Algebra', 'Practice fundamental algebraic concepts and equations', '2024-12-11 10:46:58', '2024-12-11 10:46:58', 3, 1),
+(2, 1, 'Geometry Fundamentals', 'Test your knowledge of shapes, angles, and spatial relationships', '2024-12-11 10:46:58', '2024-12-11 10:46:58', 3, 1),
+(3, 1, 'Trigonometry Basics', 'Understanding sine, cosine, and triangular relationships', '2024-12-11 10:46:58', '2024-12-11 10:46:58', 3, 1),
+(4, 2, 'Basic Physics', 'Understanding motion, forces, and energy', '2024-12-11 10:46:59', '2024-12-15 14:55:27', 3, 0),
+(5, 2, 'Chemistry 101', 'Introduction to chemical elements and reactions', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
+(6, 2, 'Human Biology', 'Learn about human anatomy and biological systems', '2024-12-11 10:46:59', '2024-12-15 14:42:15', 3, 1),
+(7, 3, 'Python Basics', 'Introduction to Python programming language', '2024-12-11 10:46:59', '2024-12-14 14:06:53', 4, 1),
+(8, 3, 'JavaScript Fundamentals', 'Core concepts of JavaScript programming', '2024-12-11 10:46:59', '2024-12-15 14:54:56', 4, 1),
+(9, 3, 'SQL Essentials', 'Database queries and management basics', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
+(10, 4, 'Ancient Civilizations', 'Explore the earliest human societies and their developments', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
+(11, 4, 'World War II', 'Major events and figures of the Second World War', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
+(12, 4, 'Medieval Europe', 'Life and events in European middle ages', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
+(13, 5, 'World Capitals', 'Test your knowledge of capital cities around the world', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
+(14, 5, 'Natural Wonders', 'Famous geographical landmarks and natural phenomena', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
+(15, 5, 'Countries and Borders', 'International boundaries and neighboring nations', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -208,9 +214,12 @@ INSERT INTO `user_progress` (`id`, `user_id`, `quiz_id`, `score`, `completed_at`
 (7, 2, 4, 2, '2024-12-11 13:03:38'),
 (9, 2, 5, 3, '2024-12-11 13:27:52'),
 (10, 2, 13, 2, '2024-12-11 21:04:38'),
-(11, 2, 7, 3, '2024-12-11 21:13:08'),
 (12, 2, 13, 2, '2024-12-11 22:11:57'),
-(13, 2, 5, 3, '2024-12-11 22:12:18');
+(13, 2, 5, 3, '2024-12-11 22:12:18'),
+(14, 2, 8, 0, '2024-12-14 16:36:37'),
+(15, 2, 8, 1, '2024-12-14 16:53:18'),
+(16, 2, 13, 2, '2024-12-14 16:53:41'),
+(18, 2, 7, 4, '2024-12-15 12:29:12');
 
 -- --------------------------------------------------------
 
@@ -253,24 +262,27 @@ INSERT INTO `user_sessions` (`id`, `user_id`, `quiz_id`, `question_id`, `selecte
 (19, 2, 4, 4, 2, 0),
 (20, 2, 4, 5, 3, 0),
 (21, 2, 4, 6, 1, 0),
-(22, 2, 7, 7, 3, 0),
-(23, 2, 7, 8, 2, 0),
-(24, 2, 7, 9, 2, 0),
 (25, 2, 5, 13, 2, 0),
 (26, 2, 5, 14, 3, 0),
 (27, 2, 5, 15, 2, 0),
 (28, 2, 13, 10, 1, 0),
 (29, 2, 13, 11, 3, 0),
 (30, 2, 13, 12, 3, 0),
-(31, 2, 7, 7, 3, 0),
-(32, 2, 7, 8, 2, 0),
-(33, 2, 7, 9, 2, 0),
 (34, 2, 13, 10, 1, 0),
 (35, 2, 13, 11, 3, 0),
 (36, 2, 13, 12, 3, 0),
 (37, 2, 5, 13, 2, 0),
 (38, 2, 5, 14, 3, 0),
-(39, 2, 5, 15, 2, 0);
+(39, 2, 5, 15, 2, 0),
+(40, 2, 8, 19, 1, 0),
+(41, 2, 8, 19, 1, 0),
+(42, 2, 13, 10, 1, 0),
+(43, 2, 13, 11, 3, 0),
+(44, 2, 13, 12, 3, 0),
+(49, 2, 7, 7, 3, 0),
+(50, 2, 7, 8, 2, 0),
+(51, 2, 7, 9, 2, 0),
+(52, 2, 7, 20, 3, 0);
 
 --
 -- Indexes for dumped tables
@@ -343,13 +355,13 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `leaderboard`
 --
 ALTER TABLE `leaderboard`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `quizzes`
@@ -367,13 +379,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_progress`
 --
 ALTER TABLE `user_progress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- Constraints for dumped tables
