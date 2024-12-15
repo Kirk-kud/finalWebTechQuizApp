@@ -15,6 +15,38 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
 $quiz_id = $_GET['id'];
 $user_id = $_SESSION['user_id'];
 
+// Check for existing attempts
+$attempts_query = "SELECT COUNT(*) as attempt_count FROM user_progress WHERE user_id = ? AND quiz_id = ?";
+$stmt = $conn->prepare($attempts_query);
+$stmt->bind_param("ii", $user_id, $quiz_id);
+$stmt->execute();
+$attempts_result = $stmt->get_result();
+$attempts = $attempts_result->fetch_assoc();
+$has_previous_attempt = $attempts['attempt_count'] > 0;
+
+// If confirmed retake, clear previous attempts
+if(isset($_GET['confirmed']) && $_GET['confirmed'] == 'true' && $has_previous_attempt) {
+    $conn->begin_transaction();
+    try {
+        // Delete from user_sessions
+        $delete_sessions = "DELETE FROM user_sessions WHERE user_id = ? AND quiz_id = ?";
+        $stmt = $conn->prepare($delete_sessions);
+        $stmt->bind_param("ii", $user_id, $quiz_id);
+        $stmt->execute();
+
+        // Delete from user_progress
+        $delete_progress = "DELETE FROM user_progress WHERE user_id = ? AND quiz_id = ?";
+        $stmt = $conn->prepare($delete_progress);
+        $stmt->bind_param("ii", $user_id, $quiz_id);
+        $stmt->execute();
+
+        $conn->commit();
+    } catch (Exception $e) {
+        $conn->rollback();
+        die("Error clearing previous attempts: " . $e->getMessage());
+    }
+}
+
 // Fetch quiz details including duration
 $quiz_query = "SELECT q.*, c.name as category_name 
                FROM quizzes q 
@@ -29,6 +61,101 @@ $quiz = $quiz_result->fetch_assoc();
 if(!$quiz) {
     header("Location: quizzes.php");
     exit();
+}
+
+// If there's a previous attempt and not confirmed, show confirmation dialog
+if($has_previous_attempt && !isset($_GET['confirmed'])) {
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Retake Quiz - <?php echo htmlspecialchars($quiz['name']); ?></title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }
+            .confirmation-container {
+                max-width: 500px;
+                margin: 15vh auto;
+                padding: 2rem;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                text-align: center;
+            }
+            .btn {
+                display: inline-block;
+                padding: 0.75rem 1.5rem;
+                margin: 0.5rem;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                text-decoration: none;
+                color: white;
+                transition: background-color 0.3s;
+            }
+            .btn-confirm {
+                background-color: #4CAF50;
+            }
+            .btn-confirm:hover {
+                background-color: #45a049;
+            }
+            .btn-cancel {
+                background-color: #f44336;
+            }
+            .btn-cancel:hover {
+                background-color: #da190b;
+            }
+        </style>
+    </head>
+    <body>
+    <div class="confirmation-container">
+        <h2>Retake Quiz?</h2>
+        <p>You have already attempted this quiz. Taking it again will overwrite your previous score.</p>
+        <p>Do you want to continue?</p>
+        <div>
+            <a href="take_quiz.php?id=<?php echo $quiz_id; ?>&confirmed=true" class="btn btn-confirm">Yes, Retake Quiz</a>
+            <a href="quizzes.php" class="btn btn-cancel">No, Go Back</a>
+        </div>
+    </div>
+    </body>
+    </html>
+    <?php
+    exit();
+}
+
+if(isset($_GET['confirmed']) && $_GET['confirmed'] == 'true' && $has_previous_attempt) {
+    $conn->begin_transaction();
+    try {
+        // Delete from user_sessions
+        $delete_sessions = "DELETE FROM user_sessions WHERE user_id = ? AND quiz_id = ?";
+        $stmt = $conn->prepare($delete_sessions);
+        $stmt->bind_param("ii", $user_id, $quiz_id);
+        $stmt->execute();
+
+        // Delete from user_progress
+        $delete_progress = "DELETE FROM user_progress WHERE user_id = ? AND quiz_id = ?";
+        $stmt = $conn->prepare($delete_progress);
+        $stmt->bind_param("ii", $user_id, $quiz_id);
+        $stmt->execute();
+
+        // Delete from leaderboard - only if we want to completely reset
+        $delete_leaderboard = "DELETE FROM leaderboard WHERE user_id = ? AND quiz_id = ?";
+        $stmt = $conn->prepare($delete_leaderboard);
+        $stmt->bind_param("ii", $user_id, $quiz_id);
+        $stmt->execute();
+
+        $conn->commit();
+    } catch (Exception $e) {
+        $conn->rollback();
+        die("Error clearing previous attempts: " . $e->getMessage());
+    }
 }
 
 // Fetch questions for this quiz
@@ -49,7 +176,35 @@ while($question = $questions_result->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo htmlspecialchars($quiz['name']); ?></title>
     <style>
-        /* Previous styles remain */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 0.5rem;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .navbar a:hover {
+            color: #ff9800;
+        }
         .quiz-container {
             max-width: 800px;
             margin: 15vh auto 2rem;
@@ -95,14 +250,21 @@ while($question = $questions_result->fetch_assoc()) {
             border-radius: 4px;
             cursor: pointer;
             font-size: 1rem;
+            transition: background-color 0.3s;
         }
         #prevBtn {
             background-color: #666;
             color: white;
         }
+        #prevBtn:hover {
+            background-color: #555;
+        }
         #nextBtn {
             background-color: #4CAF50;
             color: white;
+        }
+        #nextBtn:hover {
+            background-color: #45a049;
         }
         .progress-bar {
             width: 100%;
@@ -110,12 +272,13 @@ while($question = $questions_result->fetch_assoc()) {
             background-color: #ddd;
             margin: 1rem 0;
             border-radius: 5px;
+            overflow: hidden;
         }
         .progress {
             height: 100%;
             background-color: #4CAF50;
             border-radius: 5px;
-            transition: width 0.3s;
+            transition: width 0.3s ease;
         }
         .timer-container {
             position: fixed;
@@ -147,9 +310,21 @@ while($question = $questions_result->fetch_assoc()) {
     </style>
 </head>
 <body>
-<nav class="navbar">
-    <!-- Previous navbar content remains the same -->
-</nav>
+<!--<nav class="navbar">-->
+<!--    <div class="logo">-->
+<!--        <a href="../index.php">-->
+<!--            <img style="width:6rem; height: 6rem;" src="../assets/images/quiz_quest_logo_white.png" alt="Quiz Quest Logo">-->
+<!--        </a>-->
+<!--    </div>-->
+<!--    <div class="links">-->
+<!--        <a href="../index.php">Home</a>-->
+<!--        <a href="../view/about.html">About</a>-->
+<!--        <a href="../view/quizzes.php">Quizzes</a>-->
+<!--        <a href="leaderboard.php">Leaderboard</a>-->
+<!--        <a href="profile.php">Profile</a>-->
+<!--        <a href="../actions/logout.php">Logout</a>-->
+<!--    </div>-->
+<!--</nav>-->
 
 <div class="timer-container">
     Time Remaining: <span class="timer" id="timer"></span>
@@ -230,7 +405,6 @@ while($question = $questions_result->fetch_assoc()) {
     }
 
     function updateQuestion() {
-        // Previous update logic remains
         const progress = ((currentQuestion + 1) / totalQuestions) * 100;
         document.querySelector('.progress').style.width = `${progress}%`;
 

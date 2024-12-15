@@ -82,15 +82,15 @@ try {
     }
 
     // Update leaderboard if this is a high score
-    $leaderboard_query = "INSERT INTO leaderboard (user_id, quiz_id, high_score)
-                         VALUES (?, ?, ?)
-                         ON DUPLICATE KEY UPDATE high_score = 
-                         CASE WHEN VALUES(high_score) > high_score 
-                         THEN VALUES(high_score) ELSE high_score END";
+    $leaderboard_query = "
+    INSERT INTO leaderboard (user_id, quiz_id, high_score)
+    VALUES (?, ?, ?)
+    ON DUPLICATE KEY UPDATE 
+    high_score = GREATEST(high_score, VALUES(high_score))";
+
     $stmt = $conn->prepare($leaderboard_query);
     $stmt->bind_param("iii", $user_id, $quiz_id, $score);
     $stmt->execute();
-
     // Commit transaction
     $conn->commit();
 

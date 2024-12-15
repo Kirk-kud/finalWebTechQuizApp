@@ -1,10 +1,19 @@
 <?php
 session_start();
 
-//if (!isset($_SESSION['user_id'])) {
-//    header("Location: ../index.php");
-//    exit();
-//}
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../index.php");
+    exit();
+}
+
+include "../db/config.php";
+
+// Get all available quizzes for the dropdown
+$quizzes_query = "SELECT id, name FROM quizzes ORDER BY name";
+$quizzes_result = $conn->query($quizzes_query);
+
+// Get selected quiz_id from POST or default to null
+$selected_quiz_id = isset($_POST['quiz_id']) ? $_POST['quiz_id'] : null;
 ?>
 <!DOCTYPE html>
 <html>
@@ -25,6 +34,31 @@ session_start();
             line-height: 1.6;
             background: linear-gradient(135deg, #ff9800 0%, #ff9800 50%, white 50%, white 100%);
             background-attachment: fixed;
+        }
+        .quiz-selector {
+            margin: 2rem auto;
+            max-width: 800px;
+            text-align: center;
+        }
+        .quiz-selector select {
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            min-width: 200px;
+            margin-right: 1rem;
+        }
+        .quiz-selector button {
+            padding: 0.5rem 1rem;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .quiz-selector button:hover {
+            background-color: #f57c00;
         }
         .page-container {
             display: flex;
@@ -188,6 +222,20 @@ session_start();
         <h1 style="font-weight: 300; font-size: 3.5rem; font-family: 'Inter';">Leaderboard</h1>
         <p>Welcome to the Quiz Quest Leaderboard! <br>Here you can see the top performers and track your progress.</p>
 
+        <!-- Add quiz selector form -->
+        <form method="POST" class="quiz-selector">
+            <select name="quiz_id" id="quiz_id">
+                <option value="">All Quizzes</option>
+                <?php
+                while ($quiz = $quizzes_result->fetch_assoc()) {
+                    $selected = ($selected_quiz_id == $quiz['id']) ? 'selected' : '';
+                    echo "<option value='" . $quiz['id'] . "' $selected>" . htmlspecialchars($quiz['name']) . "</option>";
+                }
+                ?>
+            </select>
+            <button type="submit">View Rankings</button>
+        </form>
+
         <div class="leaderboard-section">
             <h2>Top Players</h2>
             <table>
@@ -201,11 +249,8 @@ session_start();
                 </thead>
                 <tbody>
                 <?php
-
-
-                include "../db/config.php";
                 try {
-                    $stmt = $conn->prepare("
+                    $query = "
                         WITH RankedScores AS (
                             SELECT 
                                 l.user_id, 
@@ -217,27 +262,23 @@ session_start();
                             FROM leaderboard l 
                             JOIN users u ON l.user_id = u.user_id 
                             JOIN quizzes q ON l.quiz_id = q.id 
+                            " . ($selected_quiz_id ? "WHERE q.id = ?" : "") . "
                             GROUP BY l.user_id, q.id, u.fname, u.lname, q.name
-                        ), 
-                        UniqueTopScores AS (
-                            SELECT 
-                                rank, 
-                                username, 
-                                quiz_name, 
-                                ROUND((high_score / total_questions) * 100, 1) as score_percentage,
-                                ROW_NUMBER() OVER (PARTITION BY quiz_name ORDER BY high_score DESC) as quiz_rank
-                            FROM RankedScores
                         )
                         SELECT 
                             rank, 
                             username, 
                             quiz_name, 
-                            score_percentage 
-                        FROM UniqueTopScores 
-                        WHERE quiz_rank = 1 
-                        ORDER BY rank ASC 
-                        LIMIT 10;
-                    ");
+                            ROUND((high_score / total_questions) * 100, 1) as score_percentage
+                        FROM RankedScores 
+                        ORDER BY rank ASC, quiz_name ASC 
+                        LIMIT 10";
+
+                    $stmt = $conn->prepare($query);
+
+                    if ($selected_quiz_id) {
+                        $stmt->bind_param("i", $selected_quiz_id);
+                    }
 
                     $stmt->execute();
                     $result = $stmt->get_result();
@@ -259,7 +300,10 @@ session_start();
                     }
 
                     if (!$hasResults) {
-                        echo "<tr><td colspan='4' class='empty-message'>No quiz attempts recorded yet. Be the first to make it to the leaderboard!</td></tr>";
+                        $message = $selected_quiz_id ?
+                            "No attempts recorded for this quiz yet. Be the first to make it to the leaderboard!" :
+                            "No quiz attempts recorded yet. Be the first to make it to the leaderboard!";
+                        echo "<tr><td colspan='4' class='empty-message'>$message</td></tr>";
                     }
 
                 } catch (Exception $e) {
