@@ -24,6 +24,13 @@ $selected_quiz_id = isset($_POST['quiz_id']) ? $_POST['quiz_id'] : null;
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        :root {
+            --primary-color: rgba(0, 0, 0, 0.82);
+            --secondary-color: #FFA500;
+            --accent-color: #e74c3c;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+        }
         * {
             box-sizing: border-box;
             margin: 0;
@@ -66,6 +73,7 @@ $selected_quiz_id = isset($_POST['quiz_id']) ? $_POST['quiz_id'] : null;
             min-height: 100vh;
         }
         .navbar {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             position: fixed;
             top: 0;
             left: 0;
@@ -74,7 +82,7 @@ $selected_quiz_id = isset($_POST['quiz_id']) ? $_POST['quiz_id'] : null;
             justify-content: space-between;
             align-items: center;
             padding: 1rem 5%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.3);
             z-index: 10;
         }
         .navbar a {
@@ -82,14 +90,34 @@ $selected_quiz_id = isset($_POST['quiz_id']) ? $_POST['quiz_id'] : null;
             text-decoration: none;
             margin: 0 0.5rem;
             font-weight: bold;
-            transition: color 0.3s;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
         }
         .navbar a:hover {
-            color: #ff9800;
+            background-color: rgba(255,255,255,0.2);
+            transform: scale(1.05);
         }
         .navbar .logo {
             font-size: 1.8rem;
             font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem;
+            }
+            .navbar .links {
+                margin-top: 1rem;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .navbar a {
+                margin: 0.25rem;
+            }
         }
         .content {
             margin-top: 13rem;
@@ -196,22 +224,24 @@ $selected_quiz_id = isset($_POST['quiz_id']) ? $_POST['quiz_id'] : null;
 <body>
 <div class="page-container">
     <nav class="navbar">
-        <div class="logo">
-            <a href="../index.php">
-                <img style="width:6rem; height: 6rem;" src="../assets/images/quiz_quest_logo_white.png" alt="LOGO">
-            </a>
-        </div>
+        <div class="logo"><a href="../index.php"><img style="width:6rem; height: 6rem;" src="../assets/images/quiz_quest_logo_white.png"></a></div>
         <div class="links">
             <a href="../index.php">Home</a>
-            <a href="../view/about.html">About</a>
+            <a href="about.html">About</a>
             <?php
             if(!isset($_SESSION['user_id'])){
-                echo "<a href='../view/login.php'>Login</a>";
-                echo "<a href='../view/signup.php'>Sign Up</a>";
-            } else {
-                echo "<a href='quizzes.php'>Quizzes</a>";
+                echo "<a href='login.php'>Login</a>";
+                echo "<a href='signup.php'>Sign Up</a>";
+            }
+            else{
+                if ($_SESSION['role'] != '1'){
+                    echo "<a href='quizzes.php'>Quizzes</a>";
+                }
                 echo "<a href='leaderboard.php'>Leaderboard</a>";
                 echo "<a href='profile.php'>Profile</a>";
+                if ($_SESSION['role'] == '1'){
+                    echo "<a href='admin/dashboard.php'>Dashboard</a>";
+                }
                 echo "<a href='../actions/logout.php'>Logout</a>";
             }
             ?>
