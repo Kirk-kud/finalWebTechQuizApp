@@ -67,7 +67,7 @@
                        data-parsley-pattern="/^(?=.*[A-Z])(?=.*\d.*\d.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/" data-parsley-trigger="keyup" data-parsley-required-message="Password is required." data-parsley-minlength-message="Password must be at least 8 characters long."
                        data-parsley-pattern-message="Password must contain at least one uppercase and one lowercase letter.">
                 <div class="password-visibility">
-                    <input type="checkbox" id="show_password" onclick="togglePasswordVisibility('password')">
+                    <input type="checkbox" id="show_password" onclick="togglePasswordVisibility()">
                     <label for="show_password">Show Password</label>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                        data-parsley-required-message="Please confirm your password." data-parsley-equalto-message="Passwords do not match.">
                 <div class="password-visibility">
                     <input type="checkbox" id="show_confirm_password"
-                            onclick="togglePasswordVisibility('confirm')"
+                            onclick="togglePasswordConfirmVisibility()"
                     >
                     <label for="show_confirm_password">Show Password</label>
                 </div>
@@ -92,16 +92,20 @@
 </div>
 
 <script>
-    function togglePasswordVisibility(inputId) {
-        var passwordInput = document.getElementById(inputId);
-        var showPasswordCheckbox;
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById("password");
+        var showPasswordCheckbox = document.getElementById("show_password");
 
-        if (inputId === "show_password") {){
-            showPasswordCheckbox = document.getElementById('show_password');
+        if (showPasswordCheckbox.checked) {
+            passwordInput.type = "text";
+        } else {
+            passwordInput.type = "password";
         }
-        else if (inputId === "show_confirm_password"){
-            showPasswordCheckbox = document.getElementById('show_confirm_password');
-        }
+    }
+
+    function togglePasswordConfirmVisibility() {
+        var passwordInput = document.getElementById("confirm");
+        var showPasswordCheckbox = document.getElementById("show_confirm_password");
 
         if (showPasswordCheckbox.checked) {
             passwordInput.type = "text";
