@@ -391,7 +391,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                                         data-fname='" . htmlspecialchars($row["fname"]) . "' 
                                         data-email='" . htmlspecialchars($row["email"]) . "'><i class='fas fa-edit'></i></button>
                                 <button class='delete-btn' data-id='" . $row["user_id"] . "'><i class='fas fa-trash'></i></button>
-                                <button class='view-btn' data-id='" . $row["user_id"] . "'><i class='fas fa-eye'></i></button>
                             </td>";
                         }
                         echo "</tr>";
@@ -405,7 +404,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         </div>
     </main>
 
-    <!-- Edit User Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -431,14 +429,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         </div>
     </div>
 
-    <!-- View More Modal -->
-    <div id="viewMoreModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>User Details</h2>
-            <div id="userDetails"></div>
-        </div>
-    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -526,50 +517,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             });
         });
 
-        // View More Modal
-        const viewMoreModal = document.getElementById('viewMoreModal');
-        const closeViewMoreModal = viewMoreModal.querySelector('.close');
-        const userDetails = document.getElementById('userDetails');
-        const viewButtons = document.querySelectorAll('.view-btn');
-
-        viewButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const userId = e.currentTarget.dataset.id;
-
-                // In a real application, you'd fetch user details via AJAX
-                const dummyData = {
-                    id: userId,
-                    name: 'Sample User',
-                    email: 'user@example.com',
-                    joinDate: '2023-01-15',
-                    lastLogin: '2023-05-20',
-                    recipesShared: 5
-                };
-
-                userDetails.innerHTML = `
-                    <p><strong>ID:</strong> ${dummyData.id}</p>
-                    <p><strong>Name:</strong> ${dummyData.name}</p>
-                    <p><strong>Email:</strong> ${dummyData.email}</p>
-                    <p><strong>Join Date:</strong> ${dummyData.joinDate}</p>
-                    <p><strong>Last Login:</strong> ${dummyData.lastLogin}</p>
-                    <p><strong>Recipes Shared:</strong> ${dummyData.recipesShared}</p>
-                `;
-
-                viewMoreModal.style.display = 'block';
-            });
-        });
-
-        closeViewMoreModal.addEventListener('click', () => {
-            viewMoreModal.style.display = 'none';
-        });
 
         // Close modals when clicking outside
         window.addEventListener('click', (event) => {
             if (event.target === editModal) {
                 editModal.style.display = 'none';
-            }
-            if (event.target === viewMoreModal) {
-                viewMoreModal.style.display = 'none';
             }
         });
     });

@@ -18,14 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $name = mysqli_real_escape_string($conn, $_POST['quiz_name']);
         $description = mysqli_real_escape_string($conn, $_POST['description']);
         $duration = mysqli_real_escape_string($conn, $_POST['duration']);
+        $is_active = isset($_POST['is_active']) ? 1 : 0;
 
-        $query = "INSERT INTO quizzes (category_id, name, description, duration_minutes) VALUES ('$category_id', '$name', '$description', '$duration')";
+        $query = "INSERT INTO quizzes (category_id, name, description, duration_minutes, is_active) VALUES ('$category_id', '$name', '$description', '$duration', '$is_active')";
         $result = mysqli_query($conn, $query);
 
         if ($result) {
-            header("Location: dashboard.php?success=Quiz created successfully");
+            header("Location: manage_quizzes.php?success=Quiz created");
         } else {
-            header("Location: dashboard.php?error=Failed to create quiz");
+            header("Location: manage_quizzes.php?error=Couldn't create quiz");
         }
         exit();
     }
@@ -37,14 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $name = mysqli_real_escape_string($conn, $_POST['quiz_name']);
         $description = mysqli_real_escape_string($conn, $_POST['description']);
         $duration = mysqli_real_escape_string($conn, $_POST['duration']);
+        $is_active = isset($_POST['is_active']) ? 1 : 0;
 
-        $query = "UPDATE quizzes SET category_id = '$category_id', name = '$name', description = '$description', duration_minutes = '$duration' WHERE id = '$quiz_id'";
+        $query = "UPDATE quizzes SET category_id = '$category_id', name = '$name', description = '$description', duration_minutes = '$duration', is_active = '$is_active' WHERE id = '$quiz_id'";
         $result = mysqli_query($conn, $query);
 
         if ($result) {
-            header("Location: dashboard.php?success=Quiz updated successfully");
+            header("Location: manage_quizzes.php?success=Quiz updated");
         } else {
-            header("Location: dashboard.php?error=Failed to update quiz");
+            header("Location: manage_quizzes.php?error=Couldn't update quiz");
         }
         exit();
     }
@@ -56,9 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = mysqli_query($conn, $query);
 
         if ($result) {
-            header("Location: dashboard.php?success=Quiz deleted successfully");
+            header("Location: manage_quizzes.php?success=Quiz deleted successfully");
         } else {
-            header("Location: dashboard.php?error=Failed to delete quiz");
+            header("Location: manage_quizzes.php?error=Failed to delete quiz");
         }
         exit();
     }
@@ -432,6 +434,24 @@ while ($row = mysqli_fetch_assoc($categories_result)) {
                 margin: 10% auto;
             }
         }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
@@ -477,6 +497,7 @@ while ($row = mysqli_fetch_assoc($categories_result)) {
                 <th>Category</th>
                 <th>Description</th>
                 <th>Duration</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -488,12 +509,18 @@ while ($row = mysqli_fetch_assoc($categories_result)) {
                     <td><?php echo htmlspecialchars($quiz['description'] ?? 'No description'); ?></td>
                     <td><?php echo htmlspecialchars($quiz['duration_minutes']); ?></td>
                     <td>
+                    <span class="status-badge <?php echo $quiz['is_active'] ? 'status-active' : 'status-inactive'; ?>">
+                        <?php echo $quiz['is_active'] ? 'Active' : 'Inactive'; ?>
+                    </span>
+                    </td>
+                    <td>
                         <button class="btn btn-edit" onclick="editQuiz(
                         <?php echo $quiz['id']; ?>,
                                 '<?php echo htmlspecialchars($quiz['name']); ?>',
                                 '<?php echo htmlspecialchars($quiz['category_id']); ?>',
                                 '<?php echo htmlspecialchars($quiz['description'] ?? ''); ?>',
-                        <?php echo $quiz['duration_minutes']; ?>
+                        <?php echo $quiz['duration_minutes']; ?>,
+                        <?php echo $quiz['is_active']; ?>
                                 )">Edit</button>
                         <button class="btn btn-delete" onclick="deleteQuiz(<?php echo $quiz['id']; ?>)">Delete</button>
                         <a href="manage_questions.php?quiz_id=<?php echo $quiz['id']; ?>" class="btn btn-primary">
@@ -507,7 +534,6 @@ while ($row = mysqli_fetch_assoc($categories_result)) {
     </div>
 </main>
 
-<!-- Create Quiz Modal -->
 <div id="createQuizModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -537,6 +563,12 @@ while ($row = mysqli_fetch_assoc($categories_result)) {
                     <label class="form-label">Duration (minutes):</label>
                     <input type="number" name="duration" class="form-control" min="1" max="60" required>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" name="is_active" value="1" checked>
+                        Active Quiz
+                    </label>
+                </div>
                 <div class="actions-group">
                     <button type="button" class="btn btn-primary" onclick="closeModal('createQuizModal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Create Quiz</button>
@@ -546,7 +578,6 @@ while ($row = mysqli_fetch_assoc($categories_result)) {
     </div>
 </div>
 
-<!-- Edit Quiz Modal -->
 <div id="editQuizModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -576,6 +607,12 @@ while ($row = mysqli_fetch_assoc($categories_result)) {
                 <div class="form-group">
                     <label class="form-label">Duration (minutes):</label>
                     <input type="number" name="duration" id="editDuration" class="form-control" min="1" max="60" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" name="is_active" id="editIsActive" value="1">
+                        Active Quiz
+                    </label>
                 </div>
                 <div class="actions-group">
                     <button type="button" class="btn btn-primary" onclick="closeModal('editQuizModal')">Cancel</button>
@@ -615,13 +652,13 @@ while ($row = mysqli_fetch_assoc($categories_result)) {
         }, 300);
     }
 
-    // Quiz management functions
-    function editQuiz(id, name, categoryId, description, duration) {
+    function editQuiz(id, name, categoryId, description, duration, isActive) {
         document.getElementById('editQuizId').value = id;
         document.getElementById('editQuizName').value = name;
         document.getElementById('editCategoryId').value = categoryId;
         document.getElementById('editDescription').value = description;
         document.getElementById('editDuration').value = duration;
+        document.getElementById('editIsActive').checked = isActive == 1;
         openModal('editQuizModal');
     }
 

@@ -7,16 +7,14 @@ if(!isset($_SESSION['user_id'])){
     exit();
 }
 
-// Fetch all categories with their quizzes
 $query = "
-    SELECT c.*, q.id as quiz_id, q.name as quiz_name, q.description as quiz_description 
+    SELECT c.*, q.id as quiz_id, q.name as quiz_name, q.description as quiz_description, q.is_active 
     FROM categories c
     LEFT JOIN quizzes q ON c.id = q.category_id
     ORDER BY c.name, q.name
 ";
 $result = $conn->query($query);
 
-// Organize data by categories
 $categories = [];
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
@@ -32,7 +30,8 @@ if ($result->num_rows > 0) {
             $categories[$categoryId]['quizzes'][] = [
                 'id' => $row['quiz_id'],
                 'name' => $row['quiz_name'],
-                'description' => $row['quiz_description']
+                'description' => $row['quiz_description'],
+                'is_active' => $row['is_active']
             ];
         }
     }
@@ -150,6 +149,37 @@ if ($result->num_rows > 0) {
             color: #666;
             font-style: italic;
         }
+        .start-quiz-btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        .start-quiz-btn:hover {
+            background-color: #45a049;
+        }
+
+        .quiz-inactive {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .quiz-item.inactive {
+            opacity: 0.7;
+        }
+
+        .inactive-message {
+            color: #ff0000;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -183,10 +213,15 @@ if ($result->num_rows > 0) {
                     <?php else: ?>
                         <ul class="quiz-list">
                             <?php foreach ($category['quizzes'] as $quiz): ?>
-                                <li class="quiz-item">
+                                <li class="quiz-item <?php echo $quiz['is_active'] ? '' : 'inactive'; ?>">
                                     <div class="quiz-title"><?php echo htmlspecialchars($quiz['name']); ?></div>
                                     <div class="quiz-description"><?php echo htmlspecialchars($quiz['description']); ?></div>
-                                    <a href="take_quiz.php?id=<?php echo $quiz['id']; ?>" class="start-quiz-btn">Start Quiz</a>
+                                    <?php if ($quiz['is_active']): ?>
+                                        <a href="take_quiz.php?id=<?php echo $quiz['id']; ?>" class="start-quiz-btn">Start Quiz</a>
+                                    <?php else: ?>
+                                        <span class="start-quiz-btn quiz-inactive">Quiz Not Available</span>
+                                        <div class="inactive-message">This quiz is currently inactive</div>
+                                    <?php endif; ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
