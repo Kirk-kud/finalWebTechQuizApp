@@ -174,6 +174,7 @@
             }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -237,6 +238,14 @@
         <img src="../assets/images/welcome_back.jpg" alt="Login Image" id="login_image">
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form');
+        var parsleyForm = new Parsley(form);
+    });
+
+</script>
 
 <script src="../assets/js/sign_up_js.js"></script>
 </body>

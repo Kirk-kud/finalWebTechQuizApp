@@ -3,6 +3,8 @@
     <head>
         <title>Login Page</title>
         <link rel="stylesheet" href="../assets/css/signup_css.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
     </head>
     <body>
         <div class="left_div"> <!--left div-->
@@ -16,7 +18,7 @@
             <h2>
                 Sign Up To Get Started
             </h2>
-            <div class="form_container"> <!--right div-->
+            <div class="form_container">
                 <form method="post" action="../actions/register_user.php" data-parsley-validate>
                     <div class="form_element" id="sub_div">
                         <label for="fname" class="labels">First Name</label>
@@ -61,6 +63,15 @@
         </div>
     </body>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
-    <script src="../assets/js/login_js.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the form element
+            const form = document.getElementById('login-form');
+
+            // Initialize Parsley on the form
+            if (form) {
+                form.parsley();
+            }
+        });
+    </script>
 </html>

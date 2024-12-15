@@ -10,9 +10,13 @@
 
         if ((empty($email)) || !filter_var($email, FILTER_VALIDATE_EMAIL)){
             $response['error'] = 'A valid email is needed';
+            echo "<h1>A valid email is needed.</h1>";
+            echo '<meta http-equiv="refresh" content="5;url=../view/login.php">'; // taking the user back to the login page
         }
         else if (empty($password) || strlen($password) < 6){
             $response['error'] = 'Password required';
+            echo "<h1>Password required and should be at least 6 characters.</h1>";
+            echo '<meta http-equiv="refresh" content="5;url=../view/login.php">'; // taking the user back to the login page
         }
         else{
             try{
