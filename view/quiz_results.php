@@ -10,7 +10,7 @@ if(!isset($_SESSION['user_id']) || !isset($_GET['id'])){
 $user_id = $_SESSION['user_id'];
 $progress_id = $_GET['id'];
 
-// Fetch quiz results and details
+// Fetching the quiz results and details
 $query = "
     SELECT 
         up.*, 
@@ -39,10 +39,9 @@ if(!$quiz_data) {
     exit();
 }
 
-// Calculate percentage
+// percentage calculation
 $percentage = ($quiz_data['score'] / $quiz_data['total_questions']) * 100;
 
-// Fetch detailed answers
 $answers_query = "
     SELECT 
         q.question_text,

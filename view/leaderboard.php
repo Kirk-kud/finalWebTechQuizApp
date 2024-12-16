@@ -8,11 +8,11 @@ if (!isset($_SESSION['user_id'])) {
 
 include "../db/config.php";
 
-// Get all available quizzes for the dropdown
+// getting all the quizzes for the options for the leaderboard display
 $quizzes_query = "SELECT id, name FROM quizzes ORDER BY name";
 $quizzes_result = $conn->query($quizzes_query);
 
-// Get selected quiz_id from POST or default to null
+// finding the id of the selected quiz
 $selected_quiz_id = isset($_POST['quiz_id']) ? $_POST['quiz_id'] : null;
 ?>
 <!DOCTYPE html>
@@ -252,7 +252,6 @@ $selected_quiz_id = isset($_POST['quiz_id']) ? $_POST['quiz_id'] : null;
         <h1 style="font-weight: 300; font-size: 3.5rem; font-family: 'Inter';">Leaderboard</h1>
         <p>Welcome to the Quiz Quest Leaderboard! <br>Here you can see the top performers and track your progress.</p>
 
-        <!-- Add quiz selector form -->
         <form method="POST" class="quiz-selector">
             <select name="quiz_id" id="quiz_id">
                 <option value="">All Quizzes</option>

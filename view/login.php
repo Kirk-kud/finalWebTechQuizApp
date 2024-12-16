@@ -262,7 +262,7 @@
 </div>
 
 <script>
-    // Password visibility toggle
+    // password visibility toggle
     function togglePasswordVisibility() {
         var passwordInput = document.getElementById("input_password");
         var showPasswordCheckbox = document.getElementById("show_password");
@@ -274,20 +274,20 @@
         }
     }
 
-    // Form validation
+    // form validation
     const form = document.querySelector('.login_form');
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
 
-        // Remove any existing error messages
+        // remove any existing error messages
         document.querySelectorAll('.error').forEach(function(error) {
             error.remove();
         });
 
         let isValid = true;
 
-        // Email validation
+        // email validation
         const email_regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-z]{2,6}$/;
         let email = document.getElementById("useremail");
 
@@ -296,8 +296,8 @@
             isValid = false;
         }
 
-        // Password validation
-        const password_regex = /^(?=.*[A-Z])(?=.*\d{3,})(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{8,}$/;
+        // password validation
+        const password_regex = /^(?=.*[A-Z])(?=(?:.*\d){3})(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{8,}$/;
         let password = document.getElementById('input_password');
 
         if (!password_regex.test(password.value)) {

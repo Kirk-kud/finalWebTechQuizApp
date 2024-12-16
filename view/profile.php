@@ -181,7 +181,7 @@ include "../db/config.php";
 </head>
 <body>
 <?php
-// Fetch user data
+// fetching the user's primary data
 $user_id = $_SESSION['user_id'];
 $user_query = "SELECT * FROM users WHERE user_id = ?";
 $stmt = $conn->prepare($user_query);
@@ -190,7 +190,7 @@ $stmt->execute();
 $user_result = $stmt->get_result();
 $user_data = $user_result->fetch_assoc();
 
-// Fetch user statistics with percentage calculations
+// fetching the statistics for the user
 $stats_query = "SELECT 
             COUNT(DISTINCT up.quiz_id) as total_quizzes,
             MAX(ROUND((up.score * 100.0) / (
@@ -213,7 +213,7 @@ $stmt->execute();
 $stats_result = $stmt->get_result();
 $stats_data = $stats_result->fetch_assoc();
 
-// Fetch recent activity with percentage calculations
+// fetching the user's recent quiz activity
 $activity_query = "SELECT 
             q.name as quiz_name, 
             ROUND((up.score * 100.0) / (
@@ -310,7 +310,7 @@ $activity_result = $stmt->get_result();
 </div>
 
 <?php
-// Close database connection
+// database connection closed
 $stmt->close();
 $conn->close();
 ?>

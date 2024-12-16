@@ -13,28 +13,28 @@ include "../db/config.php";
         if (empty($fname) ){
             $response["error"] = "Invalid first name";
             echo "<h1>First name is required.</h1>";
-            echo '<meta http-equiv="refresh" content="5;url=../view/signup.php">';
+            echo '<meta http-equiv="refresh" content="3;url=../view/signup.php">';
         }
         elseif (empty($lname)){
             $response["error"] = "Invalid last name";
             echo "<h1>Last name is required.</h1>";
-            echo '<meta http-equiv="refresh" content="5;url=../view/signup.php">';
+            echo '<meta http-equiv="refresh" content="3;url=../view/signup.php">';
         }
         elseif (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)){
             $response["error"] = "Invalid email";
             echo "<h1>Invalid email.</h1>";
-            echo '<meta http-equiv="refresh" content="5;url=../view/signup.php">';
+            echo '<meta http-equiv="refresh" content="3;url=../view/signup.php">';
         }
         elseif (empty($password) || strlen($password) < 6) {
             $response["error"] = "Password is required";
             echo "<h1>Password is required and should be at least 6 characters long.</h1>";
             // taking the user back to the sign-up page
-            echo '<meta http-equiv="refresh" content="5;url=../view/signup.php">';
+            echo '<meta http-equiv="refresh" content="3;url=../view/signup.php">';
         }
         elseif ($password !== $confirmpassword) {
             $response['error'] = 'Passwords do not match.';
             echo "<h1>Passwords do not match.</h1>";
-            echo '<meta http-equiv="refresh" content="5;url=../view/signup.php">';
+            echo '<meta http-equiv="refresh" content="3;url=../view/signup.php">';
         }
 
         if (!isset($response['error'])){
@@ -76,7 +76,6 @@ include "../db/config.php";
                 header("Location: ../view/signup.php");
             }
         }
-
     }
     $conn->close();
 ?>

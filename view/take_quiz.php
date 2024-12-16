@@ -15,7 +15,7 @@ if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
 $quiz_id = $_GET['id'];
 $user_id = $_SESSION['user_id'];
 
-// Check for existing attempts
+// checking whether the user has taken the quiz before
 $attempts_query = "SELECT COUNT(*) as attempt_count FROM user_progress WHERE user_id = ? AND quiz_id = ?";
 $stmt = $conn->prepare($attempts_query);
 $stmt->bind_param("ii", $user_id, $quiz_id);
@@ -133,23 +133,25 @@ if($has_previous_attempt && !isset($_GET['confirmed'])) {
 if(isset($_GET['confirmed']) && $_GET['confirmed'] == 'true' && $has_previous_attempt) {
     $conn->begin_transaction();
     try {
-        // Delete from user_sessions
+        // clearing the old quiz result of the user from the user_sessions table
         $delete_sessions = "DELETE FROM user_sessions WHERE user_id = ? AND quiz_id = ?";
         $stmt = $conn->prepare($delete_sessions);
         $stmt->bind_param("ii", $user_id, $quiz_id);
         $stmt->execute();
 
-        // Delete from user_progress
+        // clearing the old quiz result of the user from the user_progress table
         $delete_progress = "DELETE FROM user_progress WHERE user_id = ? AND quiz_id = ?";
         $stmt = $conn->prepare($delete_progress);
         $stmt->bind_param("ii", $user_id, $quiz_id);
         $stmt->execute();
 
-        // Delete from leaderboard - only if we want to completely reset
+        // clearing the old quiz result of the user from the leaderboard
         $delete_leaderboard = "DELETE FROM leaderboard WHERE user_id = ? AND quiz_id = ?";
         $stmt = $conn->prepare($delete_leaderboard);
         $stmt->bind_param("ii", $user_id, $quiz_id);
         $stmt->execute();
+
+        // all as precautionary measures
 
         $conn->commit();
     } catch (Exception $e) {
@@ -310,21 +312,6 @@ while($question = $questions_result->fetch_assoc()) {
     </style>
 </head>
 <body>
-<!--<nav class="navbar">-->
-<!--    <div class="logo">-->
-<!--        <a href="../index.php">-->
-<!--            <img style="width:6rem; height: 6rem;" src="../assets/images/quiz_quest_logo_white.png" alt="Quiz Quest Logo">-->
-<!--        </a>-->
-<!--    </div>-->
-<!--    <div class="links">-->
-<!--        <a href="../index.php">Home</a>-->
-<!--        <a href="../view/about.html">About</a>-->
-<!--        <a href="../view/quizzes.php">Quizzes</a>-->
-<!--        <a href="leaderboard.php">Leaderboard</a>-->
-<!--        <a href="profile.php">Profile</a>-->
-<!--        <a href="../actions/logout.php">Logout</a>-->
-<!--    </div>-->
-<!--</nav>-->
 
 <div class="timer-container">
     Time Remaining: <span class="timer" id="timer"></span>
@@ -373,7 +360,7 @@ while($question = $questions_result->fetch_assoc()) {
     let timeRemaining = quizDuration;
     let timerInterval;
 
-    // Start timer when page loads
+    // Starting timer when page loads
     startTimer();
 
     function startTimer() {
@@ -432,7 +419,7 @@ while($question = $questions_result->fetch_assoc()) {
     });
 
     function submitQuiz(isTimeUp = false) {
-        clearInterval(timerInterval); // Stop the timer
+        clearInterval(timerInterval); // Stopping the timer
 
         if (isTimeUp) {
             alert('Time is up! Your quiz will be submitted automatically.');
@@ -450,7 +437,7 @@ while($question = $questions_result->fetch_assoc()) {
                 } else {
                     alert(isTimeUp ? 'An error occurred while submitting your quiz.' : 'Please answer all questions before submitting.');
                     if (!isTimeUp) {
-                        startTimer(); // Restart timer if submission failed and it wasn't due to time up
+                        startTimer(); // Restarting timer if submission failed and it wasn't due to time up
                     }
                 }
             })
@@ -458,18 +445,18 @@ while($question = $questions_result->fetch_assoc()) {
                 console.error('Error:', error);
                 alert('An error occurred while submitting the quiz.');
                 if (!isTimeUp) {
-                    startTimer(); // Restart timer if submission failed and it wasn't due to time up
+                    startTimer(); // Restarting timer if submission failed and it wasn't due to time up
                 }
             });
     }
 
-    // Prevent leaving the page accidentally
+    // Preventing leaving the page accidentally
     window.addEventListener('beforeunload', (e) => {
         e.preventDefault();
         e.returnValue = '';
     });
 
-    // Previous option selection logic remains
+    // Previous option selection logic has to be kept
     document.querySelectorAll('.option').forEach(option => {
         option.addEventListener('click', function() {
             const questionDiv = this.closest('.question');

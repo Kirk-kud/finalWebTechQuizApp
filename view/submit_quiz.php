@@ -14,19 +14,20 @@ $correct_answers = 0;
 $total_questions = 0;
 $answers = [];
 
-// Start transaction
+// Starting the submission transaction
 $conn->begin_transaction();
 
 try {
-    // Get all submitted answers
+    // Getting all submitted answers
     foreach ($_POST as $key => $value) {
         if (strpos($key, 'question_') === 0) {
             $question_id = substr($key, 9); // Remove 'question_' prefix
 
-            // Convert zero-based index from frontend to one-based for database
+            // Converting zero-based index from frontend to one-based for database
+            // database has non-zero-based indices
             $selected_option = intval($value) + 1;
 
-            // Get quiz_id from the first question if not set
+            // Getting quiz_id from the first question if not set
             if ($quiz_id === null) {
                 $quiz_query = "SELECT quiz_id FROM questions WHERE id = ?";
                 $stmt = $conn->prepare($quiz_query);
@@ -37,12 +38,12 @@ try {
                 $quiz_id = $quiz_data['quiz_id'];
             }
 
-            // Store answer with adjusted indexing
+            // Storing the  answer with adjusted indexing
             $answers[$question_id] = $selected_option;
         }
     }
 
-    // Verify all questions are answered
+    // COde to verify all questions are answered
     $questions_query = "SELECT id, correct_option FROM questions WHERE quiz_id = ?";
     $stmt = $conn->prepare($questions_query);
     $stmt->bind_param("i", $quiz_id);
@@ -54,7 +55,7 @@ try {
         throw new Exception('All questions must be answered');
     }
 
-    // Calculate score - no need to adjust indexes here since both values are now 1-based
+    // Calculating the  score - no need to adjust indexes here since both values are now 1-based
     while ($question = $questions_result->fetch_assoc()) {
         if (isset($answers[$question['id']]) &&
             $answers[$question['id']] == $question['correct_option']) {
@@ -62,17 +63,17 @@ try {
         }
     }
 
-    // Calculate percentage score (rounded to nearest integer)
+    // percentage score (rounded to nearest integer)
     $score = $correct_answers;
 
-    // Create user progress entry
+    // user progress entry
     $progress_query = "INSERT INTO user_progress (user_id, quiz_id, score) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($progress_query);
     $stmt->bind_param("iii", $user_id, $quiz_id, $score);
     $stmt->execute();
     $progress_id = $conn->insert_id;
 
-    // Store individual answers in user_sessions (answers are already 1-based)
+    // storing individual answers in user_sessions (answers are already 1-based)
     foreach ($answers as $question_id => $selected_option) {
         $session_query = "INSERT INTO user_sessions (user_id, quiz_id, question_id, selected_option) 
                          VALUES (?, ?, ?, ?)";
@@ -81,7 +82,7 @@ try {
         $stmt->execute();
     }
 
-    // Update leaderboard if this is a high score
+    // update the leaderboard if this is a high score
     $leaderboard_query = "
     INSERT INTO leaderboard (user_id, quiz_id, high_score)
     VALUES (?, ?, ?)
@@ -103,7 +104,7 @@ try {
     ]);
 
 } catch (Exception $e) {
-    // Rollback transaction on error
+    // Rollback submission transaction on error
     $conn->rollback();
 
     http_response_code(400);
