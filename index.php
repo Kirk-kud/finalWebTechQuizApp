@@ -244,11 +244,11 @@ session_start();
     <div class="content-section why-choose-section">
         <h2>Why Choose Quiz Quest?</h2>
         <ul>
-            <li>Wide Range of Categories: From science to history, we cover multiple disciplines</li>
-            <li>Adaptive Learning: Our quizzes cater to different skill levels</li>
-            <li>Instant Feedback: Learn from your mistakes in real-time</li>
-            <li>Leaderboard: Track your progress and compete with other learners</li>
-            <li>Free Access: Most quizzes are completely free!</li>
+            <li>Wide Range of Categories: From science to history, we cover multiple subjects</li>
+            <li>Adaptive Learning: Our quizzes help to different skill levels</li>
+            <li>Instant Feedback: Learn from your mistakes</li>
+            <li>Leaderboard: Check your progress and compete with your friends</li>
+            <li>Free Access: The quizzes are completely free!</li>
         </ul>
     </div>
 </div>
