@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 15, 2024 at 04:58 PM
+-- Generation Time: Dec 16, 2024 at 03:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -79,7 +79,8 @@ INSERT INTO `leaderboard` (`id`, `user_id`, `quiz_id`, `high_score`, `achieved_a
 (14, 2, 8, 0, '2024-12-14 16:36:37'),
 (15, 2, 8, 1, '2024-12-14 16:53:18'),
 (16, 2, 13, 2, '2024-12-14 16:53:41'),
-(18, 2, 7, 4, '2024-12-15 12:29:12');
+(19, 2, 7, 4, '2024-12-15 20:47:34'),
+(20, 5, 7, 4, '2024-12-16 12:55:51');
 
 -- --------------------------------------------------------
 
@@ -121,7 +122,7 @@ INSERT INTO `questions` (`id`, `quiz_id`, `question_text`, `options`, `correct_o
 (17, 12, 'Which system of social organization was prevalent in medieval Europe?', '[\"Democracy\", \"Feudalism\", \"Communism\", \"Capitalism\"]', 2, '2024-12-11 10:46:59', '2024-12-11 10:46:59'),
 (18, 12, 'What was the primary language of medieval European scholars?', '[\"French\", \"English\", \"Latin\", \"Greek\"]', 3, '2024-12-11 10:46:59', '2024-12-11 10:46:59'),
 (19, 8, 'What does echo do?', '[\"print\",\"log to console\",\"clear terminal\",\"receive input\"]', 1, '2024-12-14 16:29:56', '2024-12-14 16:52:25'),
-(20, 7, 'x = 5  \r\ny = 2  \r\nprint(x ** y)', '[\" Divides x by y\",\"Multiplies x by y\",\" Raises x to the power of y\",\"Performs integer division of x by y\"]', 3, '2024-12-14 16:50:02', '2024-12-14 16:50:02');
+(20, 7, 'x = 5  \r\ny = 2  \r\nprint(x ** y)', '[\" Divides x by y\",\"Multiplies x by y\",\" Computes x to the power of y\",\"Performs integer division of x by y\"]', 3, '2024-12-14 16:50:02', '2024-12-15 20:48:58');
 
 -- --------------------------------------------------------
 
@@ -147,7 +148,7 @@ CREATE TABLE `quizzes` (
 INSERT INTO `quizzes` (`id`, `category_id`, `name`, `description`, `created_at`, `updated_at`, `duration_minutes`, `is_active`) VALUES
 (1, 1, 'Basic Algebra', 'Practice fundamental algebraic concepts and equations', '2024-12-11 10:46:58', '2024-12-11 10:46:58', 3, 1),
 (2, 1, 'Geometry Fundamentals', 'Test your knowledge of shapes, angles, and spatial relationships', '2024-12-11 10:46:58', '2024-12-11 10:46:58', 3, 1),
-(3, 1, 'Trigonometry Basics', 'Understanding sine, cosine, and triangular relationships', '2024-12-11 10:46:58', '2024-12-11 10:46:58', 3, 1),
+(3, 1, 'Trigonometry Basics', 'Understanding sine, cosine, and triangular relationships', '2024-12-11 10:46:58', '2024-12-16 13:05:37', 3, 0),
 (4, 2, 'Basic Physics', 'Understanding motion, forces, and energy', '2024-12-11 10:46:59', '2024-12-15 14:55:27', 3, 0),
 (5, 2, 'Chemistry 101', 'Introduction to chemical elements and reactions', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
 (6, 2, 'Human Biology', 'Learn about human anatomy and biological systems', '2024-12-11 10:46:59', '2024-12-15 14:42:15', 3, 1),
@@ -155,7 +156,7 @@ INSERT INTO `quizzes` (`id`, `category_id`, `name`, `description`, `created_at`,
 (8, 3, 'JavaScript Fundamentals', 'Core concepts of JavaScript programming', '2024-12-11 10:46:59', '2024-12-15 14:54:56', 4, 1),
 (9, 3, 'SQL Essentials', 'Database queries and management basics', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
 (10, 4, 'Ancient Civilizations', 'Explore the earliest human societies and their developments', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
-(11, 4, 'World War II', 'Major events and figures of the Second World War', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
+(11, 4, 'World War II', 'Major events and figures of the Second World War', '2024-12-11 10:46:59', '2024-12-16 13:05:45', 3, 0),
 (12, 4, 'Medieval Europe', 'Life and events in European middle ages', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
 (13, 5, 'World Capitals', 'Test your knowledge of capital cities around the world', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
 (14, 5, 'Natural Wonders', 'Famous geographical landmarks and natural phenomena', '2024-12-11 10:46:59', '2024-12-11 10:46:59', 3, 1),
@@ -184,7 +185,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `email`, `password_hash`, `fname`, `lname`, `role`, `registration_date`) VALUES
 (1, 'recipeowner@gmail.com', '$2y$10$5bTYbRq18j57ID.puYqRTOWuS1Xv95.F/n0HaOdEuD.uPfgfFm4xi', 'Kirk', 'Kudoto', 2, '2024-12-10 13:18:02'),
 (2, 'e.akordor@gmail.com', '$2y$10$vF.PLjJg3OKkbZDJQq2VcO8CvqTmH2Vpri0kyyVJO9IG2yvquFxtu', 'Eunice', 'Akordor', 2, '2024-12-11 13:29:35'),
-(3, 'admin@gmail.com', '$2y$10$n1EOBXRWGXPJ.OVluvlxRuevrzRV8KE9NKISlZK.Z7jor0INjcTE2', 'Admin', 'User', 1, '2024-12-11 13:39:43');
+(3, 'admin@gmail.com', '$2y$10$n1EOBXRWGXPJ.OVluvlxRuevrzRV8KE9NKISlZK.Z7jor0INjcTE2', 'Admin', 'User', 1, '2024-12-11 13:39:43'),
+(4, 'e.j@gmail.com', '$2y$10$6wAeEGNZiHKRuK.KmgKfWeLIsot3qheKETX9fZm1afNi.b7qA8vC.', 'Jon', 'Jomo', 2, '2024-12-16 09:56:02'),
+(5, 'nkon29@gmail.com', '$2y$10$NN6A9SBwazJz30l/Z5U.TOfrPwdquh/SU/dAJcYFjgqmA8AacL3oy', 'Nana', 'Nyarko', 2, '2024-12-16 12:54:55');
 
 -- --------------------------------------------------------
 
@@ -219,7 +222,8 @@ INSERT INTO `user_progress` (`id`, `user_id`, `quiz_id`, `score`, `completed_at`
 (14, 2, 8, 0, '2024-12-14 16:36:37'),
 (15, 2, 8, 1, '2024-12-14 16:53:18'),
 (16, 2, 13, 2, '2024-12-14 16:53:41'),
-(18, 2, 7, 4, '2024-12-15 12:29:12');
+(19, 2, 7, 4, '2024-12-15 20:47:34'),
+(20, 5, 7, 4, '2024-12-16 12:55:51');
 
 -- --------------------------------------------------------
 
@@ -279,10 +283,14 @@ INSERT INTO `user_sessions` (`id`, `user_id`, `quiz_id`, `question_id`, `selecte
 (42, 2, 13, 10, 1, 0),
 (43, 2, 13, 11, 3, 0),
 (44, 2, 13, 12, 3, 0),
-(49, 2, 7, 7, 3, 0),
-(50, 2, 7, 8, 2, 0),
-(51, 2, 7, 9, 2, 0),
-(52, 2, 7, 20, 3, 0);
+(53, 2, 7, 7, 3, 0),
+(54, 2, 7, 8, 2, 0),
+(55, 2, 7, 9, 2, 0),
+(56, 2, 7, 20, 3, 0),
+(57, 5, 7, 7, 3, 0),
+(58, 5, 7, 8, 2, 0),
+(59, 5, 7, 9, 2, 0),
+(60, 5, 7, 20, 3, 0);
 
 --
 -- Indexes for dumped tables
@@ -300,8 +308,8 @@ ALTER TABLE `categories`
 --
 ALTER TABLE `leaderboard`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `quiz_id` (`quiz_id`);
+  ADD KEY `quiz_id` (`quiz_id`),
+  ADD KEY `leaderboard_ibfk_1` (`user_id`);
 
 --
 -- Indexes for table `questions`
@@ -355,7 +363,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `leaderboard`
 --
 ALTER TABLE `leaderboard`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `questions`
@@ -373,19 +381,19 @@ ALTER TABLE `quizzes`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `user_progress`
 --
 ALTER TABLE `user_progress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- Constraints for dumped tables
