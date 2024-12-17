@@ -30,7 +30,7 @@ The platform primarily serves students looking to strengthen their academic know
 
 Admin's Features: 
 
-Quiz creation and management tools
-Question bank administration
-User data management capabilities
-Performance analytics tracking
+Quiz creation and management tools \
+Question bank administration \
+User data management capabilities \
+Performance analytics tracking \
