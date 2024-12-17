@@ -33,4 +33,4 @@ Admin's Features:
 Quiz creation and management tools \
 Question bank administration \
 User data management capabilities \
-Performance analytics tracking \
+Performance analytics tracking 
